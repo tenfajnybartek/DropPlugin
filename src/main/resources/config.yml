@@ -1,0 +1,116 @@
+database:
+  host: db4free.net
+  port: 3306
+  user: tenfajnybartek
+  base: tenfajnybartek
+  password: internet
+messages:
+  turbo:
+    message: "&eAdministrator: &6{ADMIN} &6wlaczyl {TYPE} &6na &e{TIME}"
+    get: "&6Otrzymales: &e{TYPE} &6na: &e{TIME}"
+  drop: "&7Wydropiles: &6{DROP} &7x&a{AMOUNT} &7(+{PKT} pkt, +{EXP} exp) "
+settings:
+  lvling:
+    status: true
+    pointsToLvlup: 100
+    maxLevel: 100
+    chatLevels: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+    chatLevelMessage: "&6Gracz: &e{PLAYER} &6awansowal na &e{LVL} &6poziom gornictwa."
+    chatLevelMaxMessage: "&6Gracz: &e{PLAYER} &6osiagnal najwiekszy level gornictwa!"
+    chatLevelUpMessage: "&eAWANS! &aOsiagnales {LVL} level, do nastepnego potrzebujesz {POINTS} pkt."
+  toinv:
+    status: true
+    message-status: false
+    messageFullInv: "&cPosiadasz pelen ekwipunek! Wylacz drop albo zrob miejsce."
+  actionbar:
+    status: true
+    message: "&6TurboDrop dostepny jeszcze przez: &f{TIME}&6!"
+  chances:
+    - "drop.vip@0.5"
+gui:
+  name: "&2&lDrop ze Stone"
+  size: 36
+  filler:
+    name: "&a*"
+    status: true
+    item: BLACK_STAINED_GLASS_PANE
+  status:
+    enable: "&aTak"
+    disable: "&cNie"
+  item:
+    name: "&2&l{NAME}"
+    enchanted: true
+    lores:
+      - "&8* &7Szansa: &2{CHANCE}% &7(+{CHANCE-BONUS}%) &e({CHANCE-SUM}%)"
+      - "&8* &7Wypada pomiedzy &2{HEIGHT-MIN} &7a &2{HEIGHT-MAX} &7poziomem."
+      - "&8* &7Wypada w ilosci od &2{AMOUNT-MIN} &7do &2{AMOUNT-MAX}&7."
+      - "&8* &7Wypada w ilosci od &2{POINTS-MIN} &7do &2{POINTS-MAX} &7punktow."
+      - "&8* &7Exp: &2{EXP}"
+      - "&8* &7Szczescie: {FORTUNE}"
+      - "&8* &7Wlaczony: {STATUS}"
+      - ""
+      - "&8* &7Wykopales juz: &2{MINED} &7szt."
+  cobble:
+    name: "&2&lCobblestone"
+    status: true
+    item: STONE
+    slot: 35
+    lores:
+      - "&8* &7Status: {STATUS}"
+      - "&8* &7Kliknij aby zmienic!"
+  messages:
+    name: "&2&lWiadomosci"
+    status: true
+    item: PAPER
+    slot: 34
+    lores:
+      - "&8* &7Status: {STATUS}"
+      - "&8* &7Kliknij aby zmienic!"
+  turbos:
+    name: "&2&lDostepne eventy"
+    status: true
+    item: DIAMOND_PICKAXE
+    slot: 33
+    lores:
+      - ""
+      - "&8* &7TurboDrop: {DROP-STATUS}"
+      - "&8* &7Pozostaly czas: &2{DROP-EXPIRE}"
+      - ""
+      - "&8* &7TurboDrop (Dla mnie): {ME-DROP-STATUS}"
+      - "&8* &7Pozostaly czas: &2{ME-DROP-EXPIRE}"
+      - ""
+      - "&8* &7TurboExp: {EXP-STATUS}"
+      - "&8* &7Pozostaly czas: &2{EXP-EXPIRE}"
+      - ""
+      - "&8* &7TurboExp (Dla mnie): {ME-EXP-STATUS}"
+      - "&8* &7Pozostaly czas: &2{ME-EXP-EXPIRE}"
+  level:
+    name: "&2&lDoswiadczenie"
+    status: true
+    item: EXPERIENCE_BOTTLE
+    slot: 32
+    lore:
+      - ""
+      - "&8* &7Aktualny level kopania: &2{LVL}"
+      - "&8* &7Aktualne punkty: &2{PKT}"
+      - "&8* &7Punkty do nastepnego levela: &2{POINTS-TO-LEVEL}"
+      - ""
+      - "&8* &7Awans levala jest co &2500 &7pkt razy aktualny level"
+  enable-all:
+    name: "&aWlacz wszystkie dropy!"
+    status: true
+    item: LIME_TERRACOTTA
+    slot: 27
+    lores:
+      - "&8* &7Kliknij aby zmienic!"
+  disable-all:
+    name: "&cWylacz wszystkie dropy!"
+    status: true
+    item: RED_TERRACOTTA
+    slot: 28
+    lores:
+      - "&8* &7Kliknij aby zmienic!"
+turbos:
+  drop: 0
+  exp: 0
+

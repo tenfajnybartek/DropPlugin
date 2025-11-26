@@ -3,4 +3,14 @@ version: '1.0.0-SNAPSHOT'
 main: pl.tenfajnybartek.dropplugin.base.DropPlugin
 api-version: '1.21'
 authors: [tenfajnybartek]
-description: Plugin na gildie
+description: Plugin na drop ze stone
+commands:
+  drop:
+    aliases: [ "stone", "kamien" ]
+    description: "Pokazuje drop z kamienia"
+  adrop:
+    aliases: [ "admindrop" ]
+    description: "Komenda admina drop"
+  level:
+    aliases: [ "poziom", "lvl" ]
+    description: "Pokazuje aktualny poziom gracza"
