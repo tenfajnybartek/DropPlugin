@@ -2,18 +2,6 @@
 
 Plugin dla serwerów Minecraft (Paper 1.21.8+) wprowadzający zaawansowany system customowego dropu ze stone oraz system poziomów dla graczy.
 
-## 📋 Spis treści
-
-- [Opis](#-opis)
-- [Funkcje](#-funkcje)
-- [Wymagania](#-wymagania)
-- [Instalacja](#-instalacja)
-- [Konfiguracja](#-konfiguracja)
-- [Komendy i uprawnienia](#-komendy-i-uprawnienia)
-- [System poziomów](#-system-poziomów)
-- [Turbo eventy](#-turbo-eventy)
-- [GUI](#-gui)
-- [Baza danych](#-baza-danych)
 
 ## 📖 Opis
 
@@ -65,82 +53,6 @@ Każdy drop posiada:
 3. Skonfiguruj połączenie z bazą danych w `config.yml`
 4. Zrestartuj serwer
 5. Plugin automatycznie utworzy wymagane tabele w bazie danych
-
-## ⚙️ Konfiguracja
-
-### config.yml
-
-Główny plik konfiguracyjny zawiera:
-
-```yaml
-database:
-  host: localhost
-  port: 3306
-  user: user
-  base: database
-  password: password
-  maxPool: 10                      # Maksymalna liczba połączeń w puli
-  connectionTimeoutMs: 30000       # Timeout połączenia (ms)
-  idleTimeoutMs: 600000            # Timeout bezczynności (ms)
-  leakDetectionThresholdMs: 0      # Wykrywanie wycieków połączeń
-
-settings:
-  lvling:
-    status: true                   # Włącz/wyłącz system poziomów
-    pointsToLvlup: 100            # Punkty potrzebne na level (lvl * pointsToLvlup)
-    maxLevel: 100                  # Maksymalny poziom
-    chatLevels: [5, 10, 15, ...]  # Poziomy z ogłoszeniem na chacie
-    
-  toinv:
-    status: true                   # Dodawaj itemy do ekwipunku
-    message-status: false          # Wiadomość o pełnym ekwipunku
-    
-  actionbar:
-    status: true                   # ActionBar z informacjami o eventach
-    
-  chances:
-    - "drop.vip@0.5"              # Permisja@szansa_bonusowa (w procentach)
-
-gui:
-  name: "&2&lDrop ze Stone"
-  size: 36                         # Rozmiar GUI (wielokrotność 9)
-  # ... więcej opcji GUI
-```
-
-### drops.yml
-
-Konfiguracja dropów:
-
-```yaml
-drops:
-  diamond:
-    name: "Diament"
-    item: "material:DIAMOND"       # Format: material:TYP [amount:X] [name:Nazwa] [lore:...]
-    chance: 50.0                   # Szansa bazowa (0.0-100.0)
-    amount: 1-3                    # Zakres ilości
-    height: 0-90                   # Zakres Y-level
-    points: 3-7                    # Zakres punktów za wykopanie
-    exp: 10                        # Exp za jeden item
-    fortune: true                  # Czy fortune zwiększa szansę
-
-exps:
-  stone: 10                        # Exp za wykopanie stone
-  obsidian: 30                     # Exp za wykopanie obsidian
-```
-
-### Format itemów
-
-```yaml
-item: "material:DIAMOND amount:1 name:&6Special_Diamond lore:&7Line_1@nl&7Line_2 enchants:UNBREAKING;3@nlSHARPNESS;5 data:0"
-```
-
-Dostępne parametry:
-- `material:TYP` - typ materiału (wymagane)
-- `amount:X` - ilość w stacku
-- `name:Nazwa` - nazwa (używaj `_` zamiast spacji)
-- `lore:Tekst` - lore (używaj `@nl` do nowej linii, `_` zamiast spacji)
-- `enchants:NAZWA;POZIOM@nlNAZWA2;POZIOM2` - enchant
-- `data:X` - durability/damage
 
 ## 🎮 Komendy i uprawnienia
 
