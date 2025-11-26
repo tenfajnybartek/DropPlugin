@@ -144,7 +144,7 @@ GUI dostępne przez `/drop` zawiera:
 
 ## 🗄️ Baza danych
 
-Plugin wykorzystuje MySQL/MariaDB z pulą połączeń HikariCP.
+Plugin wykorzystuje MySQL z pulą połączeń HikariCP.
 
 ### Tabela: drop_users
 
