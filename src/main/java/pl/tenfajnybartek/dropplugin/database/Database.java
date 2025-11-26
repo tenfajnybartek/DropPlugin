@@ -26,7 +26,7 @@ public class Database {
 
         // Inicjalizujemy asynchronicznie
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            this.logger.info("Laczenie z baza danych...");
+            this.logger.info("Łączenie z bazą danych...");
             ConfigManager config = plugin.getPluginConfig();
 
             String host = config.getDbHost();
@@ -56,9 +56,9 @@ public class Database {
 
             try {
                 ds = new HikariDataSource(hikariConfig);
-                this.logger.info("Polaczono z baza danych!");
+                this.logger.info("Połączono z bazą danych!");
             } catch (Exception e) {
-                this.logger.warning("Nie mozna polaczyc z baza danych!");
+                this.logger.warning("Nie można połączyć z bazą danych!");
                 e.printStackTrace();
                 // jeśli nie można się połączyć - wyłączamy plugin bez używania przestarzałego API
                 // Wywołanie disablePlugin musi być wykonane na głównym wątku, dlatego schedulujemy zadanie synchroniczne.
@@ -83,7 +83,7 @@ public class Database {
                         "lastSender VARCHAR(255), " +
                         "PRIMARY KEY(identifier));");
             } catch (SQLException e) {
-                this.logger.warning("Nie mozna utworzyc tabel w bazie danych!");
+                this.logger.warning("Nie można utworzyć tabel w bazie danych!");
                 e.printStackTrace();
             }
 
@@ -94,9 +94,7 @@ public class Database {
 
                 while (resultSet.next()) {
                     try {
-                        // Avoid shadowing variable names from outer scopes: use 'dbUser' instead of 'user'
                         User dbUser = new User(resultSet);
-                        // lastMessage może być null
                         dbUser.setLastMessage(resultSet.getString("lastMessage"));
                         String lastSenderStr = resultSet.getString("lastSender");
                         if (lastSenderStr != null && !lastSenderStr.isEmpty()) {
@@ -108,15 +106,15 @@ public class Database {
                         }
                         plugin.getUserManager().getUserMap().put(dbUser.getIdentifier(), dbUser);
                     } catch (Exception e) {
-                        logger.warning("Blad przy parsowaniu rekordu uzytkownika: " + e.getMessage());
+                        logger.warning("Błąd przy parsowaniu rekordu użytkownika: " + e.getMessage());
                         e.printStackTrace();
                     }
                 }
             } catch (SQLException e) {
-                this.logger.warning("Nie mozna zaladowac graczy z bazy danych!");
+                this.logger.warning("Nie można załadować graczy z bazy danych!");
                 e.printStackTrace();
             } finally {
-                this.logger.info("Zaladowano " + plugin.getUserManager().getUserMap().size() + " graczy!");
+                this.logger.info("Załadowano " + plugin.getUserManager().getUserMap().size() + " graczy!");
             }
         });
     }
@@ -126,15 +124,22 @@ public class Database {
     }
 
     /**
-     * Zapisuje użytkownika asynchronicznie.
+     * Zapisuje użytkownika domyślnie asynchronicznie.
      */
     public void saveUser(User user) {
+        saveUser(user, false); // domyślnie async
+    }
+
+    /**
+     * Zapisuje użytkownika - synchronicznie lub asynchronicznie.
+     */
+    public void saveUser(User user, boolean sync) {
         if (ds == null) {
             logger.warning("DataSource nie jest zainicjalizowany, pomijam saveUser dla " + user.getIdentifier());
             return;
         }
 
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+        Runnable task = () -> {
             String sql = "REPLACE INTO drop_users (identifier, cobble, messages, turboDrop, turboExp, lvl, points, minedDrops, disabledDrops, lastMessage, lastSender) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
             try (Connection conn = ds.getConnection();
                  PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -157,10 +162,16 @@ public class Database {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                this.logger.warning("Nie mozna zapisac gracza do bazy danych!");
+                this.logger.warning("Nie można zapisać gracza do bazy danych!");
                 e.printStackTrace();
             }
-        });
+        };
+
+        if (sync) {
+            task.run(); // wykonuj od razu!
+        } else {
+            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, task);
+        }
     }
 
     /**
@@ -178,27 +189,36 @@ public class Database {
                  ResultSet rs = statement.executeQuery()) {
                 // nic do zrobienia, po prostu zapytanie
             } catch (Exception e) {
-                this.logger.warning("Nie mozna zaktualizowac bazy danych!");
+                this.logger.warning("Nie można zaktualizować bazy danych!");
                 e.printStackTrace();
             }
         });
     }
 
     /**
-     * Zamknięcie puli Hikari (asynchronicznie).
+     * Zamknięcie puli Hikari: synchronicznie lub asynchronicznie.
      */
     public void disconnect() {
-        // Zamykamy asynchronicznie aby nie blokować głównego wątku
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+        disconnect(false); // domyślnie async
+    }
+
+    public void disconnect(boolean sync) {
+        Runnable task = () -> {
             try {
                 if (ds != null && !ds.isClosed()) {
                     ds.close();
-                    logger.info("Pula Hikari zostala zamknieta.");
+                    logger.info("Pula Hikari została zamknięta.");
                 }
             } catch (Exception e) {
-                logger.warning("Nie mozna zamknac polaczenia z baza danych!");
+                logger.warning("Nie można zamknąć połączenia z bazą danych!");
                 e.printStackTrace();
             }
-        });
+        };
+
+        if (sync) {
+            task.run();
+        } else {
+            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, task);
+        }
     }
 }

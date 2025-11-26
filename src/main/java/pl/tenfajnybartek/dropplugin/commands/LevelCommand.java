@@ -25,7 +25,7 @@ public class LevelCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!sender.hasPermission("tfbhc.cmd.level")) {
+        if (!sender.hasPermission("dropplugin.cmd.level")) {
             ChatUtils.sendMessage(sender, "&4Blad: &cNie masz uprawnien do tej komendy! &7(tfbhc.cmd.level)");
             return true;
         }
