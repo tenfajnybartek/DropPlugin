@@ -24,7 +24,7 @@ public class Database {
         this.logger = plugin.getLogger();
         database = this;
 
-        // Inicjalizujemy asynchronicznie
+        // Inicjalizacja asynchroniczna
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             this.logger.info("Łączenie z bazą danych...");
             ConfigManager config = plugin.getPluginConfig();
@@ -49,7 +49,6 @@ public class Database {
                 hikariConfig.setLeakDetectionThreshold(config.getDbLeakDetectionThresholdMs());
             }
 
-            // Dodatkowe rekomendowane ustawienia
             hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
             hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
             hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
@@ -60,13 +59,11 @@ public class Database {
             } catch (Exception e) {
                 this.logger.warning("Nie można połączyć z bazą danych!");
                 e.printStackTrace();
-                // jeśli nie można się połączyć - wyłączamy plugin bez używania przestarzałego API
-                // Wywołanie disablePlugin musi być wykonane na głównym wątku, dlatego schedulujemy zadanie synchroniczne.
                 Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getPluginManager().disablePlugin((Plugin) plugin));
                 return;
             }
 
-            // Tworzymy tabelę (jeśli nie istnieje)
+            // Tworzenie tabeli jeśli nie istnieje
             try (Connection conn = ds.getConnection();
                  Statement st = conn.createStatement()) {
                 st.executeUpdate("CREATE TABLE IF NOT EXISTS `drop_users` (" +
@@ -87,7 +84,7 @@ public class Database {
                 e.printStackTrace();
             }
 
-            // Ładujemy użytkowników
+            // Ładowanie użytkowników z bazy
             try (Connection conn = ds.getConnection();
                  PreparedStatement ps = conn.prepareStatement("SELECT * FROM drop_users");
                  ResultSet resultSet = ps.executeQuery()) {
@@ -123,16 +120,10 @@ public class Database {
         return database;
     }
 
-    /**
-     * Zapisuje użytkownika domyślnie asynchronicznie.
-     */
     public void saveUser(User user) {
         saveUser(user, false); // domyślnie async
     }
 
-    /**
-     * Zapisuje użytkownika - synchronicznie lub asynchronicznie.
-     */
     public void saveUser(User user, boolean sync) {
         if (ds == null) {
             logger.warning("DataSource nie jest zainicjalizowany, pomijam saveUser dla " + user.getIdentifier());
@@ -168,21 +159,20 @@ public class Database {
         };
 
         if (sync) {
-            task.run(); // wykonuj od razu!
+            task.run(); // natychmiast
         } else {
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, task);
         }
     }
 
     /**
-     * Wykonuje prosty SELECT 1 aby utrzymać połączenie (asynchronicznie).
+     * Wykonuje SELECT 1 aby utrzymać połączenie (asynchronicznie).
      */
     public void sendEmptyUpdate() {
         if (ds == null) {
             logger.fine("DataSource nie zainicjalizowany - pomijam sendEmptyUpdate");
             return;
         }
-
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try (Connection conn = ds.getConnection();
                  PreparedStatement statement = conn.prepareStatement("SELECT 1");
@@ -195,9 +185,6 @@ public class Database {
         });
     }
 
-    /**
-     * Zamknięcie puli Hikari: synchronicznie lub asynchronicznie.
-     */
     public void disconnect() {
         disconnect(false); // domyślnie async
     }
@@ -216,7 +203,7 @@ public class Database {
         };
 
         if (sync) {
-            task.run();
+            task.run(); // natychmiast!
         } else {
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, task);
         }
