@@ -1,0 +1,6 @@
+name: DropPlugin
+version: '1.0.0-SNAPSHOT'
+main: pl.tenfajnybartek.dropplugin.base.DropPlugin
+api-version: '1.21'
+authors: [tenfajnybartek]
+description: Plugin na gildie
