@@ -18,14 +18,12 @@ public class ActionBarTask extends BukkitRunnable {
         this.plugin = plugin;
         this.config = plugin.getPluginConfig();
         if (this.config.isActionbarStatus()) {
-            // Run the task every 20 ticks (1 second) on the main thread
             this.runTaskTimer(plugin, 20L, 20L);
         }
     }
 
     @Override
     public void run() {
-        // Cache config values to reduce redundant calls
         if (!this.config.isActionbarStatus()) return;
         boolean turboDrop = this.config.isTurboDrop();
         String actionbarMessage = this.config.getActionbarMessage();

@@ -8,14 +8,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import pl.tenfajnybartek.dropplugin.managers.ConfigManager;
-import pl.tenfajnybartek.dropplugin.utils.RandomUtils;
 
-import java.util.Arrays;
-
-/**
- * Pomocnicze operacje na itemach (dawanie, sprawdzanie miejsca, zarządzanie trwałością).
- * Dostosowane do Paper 1.21.8 (używanie Damageable meta zamiast staroci).
- */
 public final class ItemUtils {
     private ItemUtils() {}
 
@@ -50,12 +43,10 @@ public final class ItemUtils {
         Damageable damageableMeta = (Damageable) item.getItemMeta();
         int currentDamage = damageableMeta.getDamage();
 
-        // max durability (jeśli brak - nie wykonujemy dalszej logiki)
         int maxDurability = item.getType().getMaxDurability();
         if (maxDurability <= 0) return;
 
         int enchantLevel = item.getEnchantmentLevel(Enchantment.UNBREAKING);
-        // zachowujemy logikę probabilistycznego niezużycia narzędzia
         if (enchantLevel > 0 && 100 / (enchantLevel + 1) > RandomUtils.getRandInt(0, 100)) {
             if (currentDamage >= maxDurability) {
                 player.getInventory().clear(player.getInventory().getHeldItemSlot());
@@ -77,7 +68,6 @@ public final class ItemUtils {
         if (itemStack == null || player == null) return;
 
         if (!ItemUtils.giveItem(player.getInventory(), itemStack)) {
-            // używamy ConfigManager zamiast starego Config
             ConfigManager cfg = ConfigManager.getConfigManager();
             if (cfg != null && cfg.isToInv()) {
                 if (cfg.isMessageInv()) {

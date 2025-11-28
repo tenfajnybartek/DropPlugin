@@ -18,20 +18,16 @@ public class UserPointsChangeListener implements Listener {
     public void onPktChange(UserPointsChangeEvent event) {
         User u = event.getUser();
         if (u == null) return;
-
-        // Nie pozwól przekroczyć maksymalnego poziomu
         if (u.getLvl() >= this.config.getMaxLevel()) {
             return;
         }
 
         int levelPoints = event.getLevelPoints();
 
-        // Jeśli gracz zebrał wymagane punkty na kolejny poziom -> podnieś poziom i wyzeruj punkty
         if (levelPoints >= u.getPointsRequired()) {
             int newLevel = u.getLvl() + 1;
             u.setLvl(newLevel);
             u.setPoints(0);
-            // Możesz tutaj wywołać event UserLevelChangeEvent jeśli chcesz powiadomić inne systemy
         }
     }
 }

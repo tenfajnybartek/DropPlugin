@@ -150,7 +150,6 @@ public class DropMenu {
 
         for (Chance chancee : this.config.getChances().values()) {
             if (viewer != null && viewer.hasPermission(chancee.getPerm())) {
-                // removed unnecessary .doubleValue() — autounboxing will happen when adding to primitive double
                 bonus += Objects.requireNonNullElse(chancee.getChance(), 0.0);
             }
         }

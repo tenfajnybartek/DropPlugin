@@ -21,9 +21,6 @@ import pl.tenfajnybartek.dropplugin.utils.RandomUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Zaktualizowana wersja DropManager z poprawką nazwy zmiennej (uniknięcie konfliktu "give").
- */
 public class DropManager {
     private final UserManager userManager;
     private final List<Drop> dropList;
@@ -55,7 +52,6 @@ public class DropManager {
                     int exp = section.getInt("exp", 3);
                     ItemStack itemStack = ParserUtils.parseItemStack(section.getString("item"));
                     if (itemStack == null) {
-                        // fallback na podstawowy materiał
                         itemStack = new ItemStack(Material.STONE);
                     }
                     String name = section.getString("name", "Drop");
@@ -79,15 +75,14 @@ public class DropManager {
         if (user == null) return;
 
         Block block = event.getBlock();
-        Material originalMaterial = block.getType(); // zachowaj oryginalny typ zanim zamienimy blok na AIR
+        Material originalMaterial = block.getType();
         ItemStack tool = event.getPlayer().getInventory().getItemInMainHand();
 
-        // EXP dla konkretnych bloków
         if (originalMaterial == Material.OBSIDIAN) {
             int give = this.obsidianExp;
             if (this.config.isTurboExp() || user.isTurboExp()) give *= 2;
             event.getPlayer().giveExp(give);
-            return; // koniec obsługi dla obsidianu
+            return;
         }
 
         boolean isStoneLike = originalMaterial == Material.STONE ||
@@ -101,16 +96,13 @@ public class DropManager {
             if (this.config.isTurboExp() || user.isTurboExp()) give *= 2;
             event.getPlayer().giveExp(give);
 
-            // Usuń blok i anuluj event
             event.setCancelled(true);
             block.setType(Material.AIR);
 
-            // Przywrócenie cobble logiki (silk touch)
             if (user.isCobble()) {
                 ItemStack item;
                 boolean hasSilk = tool != null && tool.containsEnchantment(Enchantment.SILK_TOUCH);
                 if (hasSilk) {
-                    // jeśli był silk touch, daj odpowiedni niewłamany blok
                     item = new ItemStack(originalMaterial);
                 } else {
                     item = new ItemStack(Material.COBBLESTONE);
@@ -118,45 +110,36 @@ public class DropManager {
                 ItemUtils.giveItem(user.getPlayer(), item);
             }
 
-            // Filtrujemy dropy i losujemy
             double playerY = event.getPlayer().getLocation().getY();
             for (Drop drop : this.dropList) {
-                // pomin brakujące warunki
                 if (user.isDisabled(drop)) continue;
                 Count h = drop.getHeight();
                 if (h != null) {
                     if (playerY > h.getMax() || playerY < h.getMin()) continue;
                 }
 
-                // oblicz bazową szansę - zakładamy, że drop.getChance() zwraca wartość 0.0-1.0
                 double chance = drop.getChance();
 
-                // Fortune zwiększa szansę (jeżeli drop ma fortune)
                 if (drop.isFortune() && tool != null) {
                     int fortuneLevel = tool.getEnchantments().getOrDefault(Enchantment.FORTUNE, 0);
                     if (fortuneLevel > 0) {
-                        chance += (fortuneLevel / 100.0); // traktujemy poziom jako procent (np. 1 -> 0.01)
+                        chance += (fortuneLevel / 100.0);
                     }
                 }
 
-                // Turbo drop podwaja szansę
                 if (this.config.isTurboDrop() || user.isTurboDrop()) {
                     chance *= 2.0;
                 }
 
-                // Szanse z permów z konfiguracji (zakładamy, że wartości w ConfigManager są w formacie "5" -> 5%)
                 for (Chance permChance : this.config.getChances().values()) {
                     if (user.getPlayer().hasPermission(permChance.getPerm())) {
-                        // dodajemy wartość jako procent -> /100.0
                         Double c = permChance.getChance();
                         if (c != null) chance += c.doubleValue() / 100.0;
                     }
                 }
 
-                // finalne losowanie
                 if (!RandomUtils.getChance(chance)) continue;
 
-                // jeśli narzędzie się zużywa — przeliczamy
                 if (tool != null) {
                     ItemUtils.recalculateDurability(event.getPlayer(), tool);
                 }
@@ -180,9 +163,7 @@ public class DropManager {
 
                 user.addPoints(points);
                 user.addDrop(drop, amount);
-
-                // dajemy itemy (bez używania przestarzałej durabilities)
-                ItemStack toGive = drop.getItemStack().clone(); // renamed variable to avoid shadowing/conflict
+                ItemStack toGive = drop.getItemStack().clone();
                 toGive.setAmount(amount);
                 ItemUtils.giveItem(event.getPlayer(), toGive);
             }

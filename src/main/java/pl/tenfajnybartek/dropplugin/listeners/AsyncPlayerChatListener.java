@@ -17,7 +17,6 @@ public class AsyncPlayerChatListener implements Listener {
 
     @EventHandler
     public void onChat(AsyncChatEvent event) {
-        // BEZPIECZNE: nie tworzymy User w wątku asynchronicznym
         User user = this.userManager.getUserIfLoaded(event.getPlayer().getUniqueId());
         Component message = event.message();
         if (user == null || message == null) {

@@ -27,7 +27,6 @@ public class InventoryClickListener implements Listener {
     public void onClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
 
-        // Odczyt i deserializacja nazwy GUI z configu jako Component
         Component expectedTitle = LegacyComponentSerializer.legacyAmpersand().deserialize(config.getGuiName());
         Component actualTitle = event.getView().title();
 
@@ -46,14 +45,12 @@ public class InventoryClickListener implements Listener {
 
         if (itemDisplayName == null) return;
 
-        // Zamieniamy Component na legacy string dla prostego porównania
         String itemName = LegacyComponentSerializer.legacyAmpersand().serialize(itemDisplayName);
 
         handleItemClick(player, user, itemName);
     }
 
     private void handleItemClick(Player player, User user, String itemName) {
-        // Dropy
         for (Drop drop : plugin.getDropManager().getDropList()) {
             String dropName = ChatUtils.colour(config.getGuiItemName().replace("{NAME}", drop.getName()));
             if (itemName.equalsIgnoreCase(dropName)) {
@@ -61,7 +58,6 @@ public class InventoryClickListener implements Listener {
                 return;
             }
         }
-        // Pozostałe opcje
         if (itemName.equalsIgnoreCase(ChatUtils.colour(config.getEnableAllName()))) {
             handleEnableAllDrops(player, user);
             return;

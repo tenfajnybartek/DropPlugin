@@ -13,9 +13,6 @@ public final class SafeUtils {
         LOGGER.log(Level.WARNING, "Suppressed exception in SafeUtils", th);
     }
 
-    /**
-     * Backwards-compatible: runs initializer, returns result or null on exception.
-     */
     public static <T> T safeInit(SafeInitializer<T> initializer) {
         try {
             return initializer.initialize();
@@ -25,9 +22,6 @@ public final class SafeUtils {
         }
     }
 
-    /**
-     * Preferred: returns Optional.empty() on exception instead of null.
-     */
     public static <T> Optional<T> optionalInit(SafeInitializer<T> initializer) {
         try {
             return Optional.ofNullable(initializer.initialize());
@@ -37,9 +31,6 @@ public final class SafeUtils {
         }
     }
 
-    /**
-     * Runs a Runnable-like task that is allowed to throw; exceptions are logged and swallowed.
-     */
     public static void safeRun(SafeRunnable runnable) {
         try {
             runnable.run();
@@ -48,9 +39,6 @@ public final class SafeUtils {
         }
     }
 
-    /**
-     * Closes an AutoCloseable quietly (logs exception if thrown).
-     */
     public static void safeClose(AutoCloseable closeable) {
         if (closeable == null) return;
         try {

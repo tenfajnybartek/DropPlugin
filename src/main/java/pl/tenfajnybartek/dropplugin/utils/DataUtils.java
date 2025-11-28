@@ -33,15 +33,9 @@ public final class DataUtils {
         return sb.toString();
     }
 
-    /**
-     * Parsuje wyrażenie czasu typu "1y2mo3w4d5h6m7s" (kolejność dowolna, części opcjonalne).
-     * Jeżeli future == true, zwraca timestamp w przyszłości; w przeciwnym razie w przeszłości.
-     * Zwraca -1 przy błędzie parsowania.
-     */
     public static long parseDateDiff(String time, boolean future) {
         if (time == null || time.isBlank()) return -1L;
         try {
-            // case-insensitive
             Pattern timePattern = Pattern.compile(
                     "(?:([0-9]+)\\s*y[a-z]*[,\\s]*)?" +    // years
                             "(?:([0-9]+)\\s*mo[a-z]*[,\\s]*)?" +   // months
@@ -55,11 +49,9 @@ public final class DataUtils {
             int years = 0, months = 0, weeks = 0, days = 0, hours = 0, minutes = 0, seconds = 0;
             boolean found = false;
             if (m.find()) {
-                // If the whole match is empty, treat as not found
                 if (m.group() == null || m.group().isEmpty()) {
                     return -1L;
                 }
-                // groups 1..7 correspond to the capture groups above
                 if (m.group(1) != null && !m.group(1).isEmpty()) years = Integer.parseInt(m.group(1));
                 if (m.group(2) != null && !m.group(2).isEmpty()) months = Integer.parseInt(m.group(2));
                 if (m.group(3) != null && !m.group(3).isEmpty()) weeks = Integer.parseInt(m.group(3));
@@ -82,7 +74,6 @@ public final class DataUtils {
             if (minutes > 0) c.add(Calendar.MINUTE, minutes * sign);
             if (seconds > 0) c.add(Calendar.SECOND, seconds * sign);
 
-            // limit do 10 lat od teraz
             GregorianCalendar max = new GregorianCalendar();
             max.add(Calendar.YEAR, 10);
             if (future && c.after(max)) {

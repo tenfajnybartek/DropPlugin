@@ -14,7 +14,6 @@ public final class MapUtils {
         for (String string : set) {
             stringBuilder.append(string).append("@");
         }
-        // Usuwamy ostatni znak '@'
         return stringBuilder.length() > 0 ? stringBuilder.substring(0, stringBuilder.length() - 1) : "";
     }
 
@@ -35,7 +34,6 @@ public final class MapUtils {
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             stringBuilder.append(entry.getKey()).append("=").append(entry.getValue()).append("@");
         }
-        // Usuwamy ostatni znak '@'
         return stringBuilder.length() > 0 ? stringBuilder.substring(0, stringBuilder.length() - 1) : "";
     }
 
@@ -49,7 +47,6 @@ public final class MapUtils {
                     try {
                         map.put(mapSplit[0], Integer.parseInt(mapSplit[1]));
                     } catch (NumberFormatException e) {
-                        // Obsłuż błąd, jeśli nie można sparsować Integer
                         e.printStackTrace();
                     }
                 }

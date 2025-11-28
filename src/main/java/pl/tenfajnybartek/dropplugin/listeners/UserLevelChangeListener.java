@@ -21,8 +21,6 @@ public class UserLevelChangeListener implements Listener {
     public void userLevelChange(UserLevelChangeEvent event) {
         Player player = event.getPlayer();
         int lvl = event.getLevel();
-
-        // Broadcast jeśli osiągnięto max level
         if (lvl == this.config.getMaxLevel()) {
             String msgAll = this.config.getMaxLevelMessage()
                     .replace("{PLAYER}", player.getName())
@@ -40,7 +38,6 @@ public class UserLevelChangeListener implements Listener {
             Bukkit.getOnlinePlayers().forEach(all -> ChatUtils.sendMessage(all, msgAll));
         }
 
-        // lokalny komunikat i dźwięk
         String personal = this.config.getLvlUpMessage()
                 .replace("{LVL}", String.valueOf(lvl))
                 .replace("{POINTS}", String.valueOf(lvl * this.config.getPointsToLvlUp()));

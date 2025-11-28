@@ -55,7 +55,6 @@ public class ADropCommand implements CommandExecutor {
             case "reload": {
                 long start = System.currentTimeMillis();
                 ChatUtils.sendMessage(sender, "&7Przeladowywanie...");
-                // Rekreujemy ConfigManager w pluginie (DropPlugin.reloadConfigManager())
                 try {
                     this.plugin.reloadConfigManager();
                     ChatUtils.sendMessage(sender, "&eDrop &7przeladowano! (" + (float) (System.currentTimeMillis() - start) / 1000.0f + "s)");
@@ -73,7 +72,6 @@ public class ADropCommand implements CommandExecutor {
                     this.usage.forEach(m -> ChatUtils.sendMessage(sender, m));
                     return true;
                 }
-
                 String target = args[1];
                 String timeStr = args[2];
                 long time = DataUtils.parseDateDiff(timeStr, true);
@@ -85,7 +83,6 @@ public class ADropCommand implements CommandExecutor {
                 boolean isDrop = sub.equals("drop");
                 String typeName = isDrop ? "TurboDrop" : "TurboExp";
 
-                // pobieraj konfigurację zawsze z pluginu (żeby reload działał od razu)
                 var config = this.plugin.getPluginConfig();
 
                 if ("all".equalsIgnoreCase(target)) {

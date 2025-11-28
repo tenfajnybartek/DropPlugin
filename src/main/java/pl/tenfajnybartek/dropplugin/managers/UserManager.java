@@ -19,7 +19,6 @@ public class UserManager {
         User cached = this.userMap.get(id);
         if (cached != null) return cached;
 
-        // Tworzenie nowego User powinno być na głównym wątku
         if (!Bukkit.isPrimaryThread()) {
             return null;
         }
@@ -29,10 +28,6 @@ public class UserManager {
         return prev != null ? prev : created;
     }
 
-    /**
-     * Zwraca User tylko jeżeli jest już załadowany w pamięci (cache).
-     * BEZPIECZNE do wywołania z wątków asynchronicznych.
-     */
     public User getUserIfLoaded(UUID uuid) {
         if (uuid == null) return null;
         return this.userMap.get(uuid);

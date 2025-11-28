@@ -22,13 +22,11 @@ public class DropCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        // permission check
         if (!sender.hasPermission("dropplugin.cmd.drop")) {
             ChatUtils.sendMessage(sender, "&4Blad: &cNie masz uprawnien do tej komendy! &7(tfbhc.cmd.drop)");
             return true;
         }
 
-        // ensure sender is a player
         if (!(sender instanceof Player)) {
             ChatUtils.sendMessage(sender, "&4Blad: &cTa komenda moze byc uzywana tylko przez graczy.");
             return true;

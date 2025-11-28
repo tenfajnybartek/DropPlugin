@@ -67,7 +67,6 @@ public class LevelCommand implements CommandExecutor {
             return true;
         }
 
-        // niepoprawna liczba argumentów
         ChatUtils.sendMessage(sender, "&cPoprawne uzycie: &7/level [nick_gracza]");
         return true;
     }

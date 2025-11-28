@@ -5,9 +5,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import pl.tenfajnybartek.dropplugin.objects.User;
 
-/**
- * Event wywoływany po zmianie punktów użytkownika.
- */
 public class UserPointsChangeEvent extends Event {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 

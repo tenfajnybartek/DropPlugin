@@ -14,29 +14,17 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * Zaktualizowana klasa User:
- * - usunięto zależności od Guavy (Maps/Sets) na rzecz standardowych kolekcji
- * - odwołania do konfiguracji używają ConfigManager.getConfigManager()
- * - ResultSet constructor jest null-safe dla pól lastMessage/lastSender
- */
 public class User {
     private HashMap<String, Integer> minedDrops;
     private final Set<String> disabledDrops;
     private boolean cobble;
     private boolean messages;
-    private boolean msgToggle;
     private final UUID identifier;
     private long turboDrop;
     private long turboExp;
     private int points;
     private int lvl;
 
-    // Nowe pola
-    private String lastMessage;
-    private UUID lastSender;
-
-    // Konstruktor
     public User(Player player) {
         this.identifier = player.getUniqueId();
         this.cobble = true;
@@ -47,12 +35,8 @@ public class User {
         this.turboExp = 0L;
         this.lvl = 1;
         this.points = 0;
-        this.lastMessage = null;
-        this.lastSender = null;
-        this.msgToggle = false;
     }
 
-    // Konstruktor z ResultSet
     public User(ResultSet resultSet) throws SQLException {
         this.identifier = UUID.fromString(resultSet.getString("identifier"));
         this.cobble = resultSet.getBoolean("cobble");
@@ -63,30 +47,8 @@ public class User {
         this.points = resultSet.getInt("points");
         this.minedDrops = MapUtils.deserializeMap(resultSet.getString("minedDrops"));
         this.disabledDrops = MapUtils.deserializeList(resultSet.getString("disabledDrops"));
-        this.lastMessage = resultSet.getString("lastMessage"); // może być null
-
-        String lastSenderStr = resultSet.getString("lastSender");
-        if (lastSenderStr != null && !lastSenderStr.isEmpty()) {
-            try {
-                this.lastSender = UUID.fromString(lastSenderStr);
-            } catch (IllegalArgumentException iae) {
-                // niepoprawny UUID — ustawiamy null i logujemy ostrzeżenie
-                this.lastSender = null;
-                Bukkit.getLogger().warning("Niepoprawny lastSender UUID w DB dla identyfikatora " + this.identifier + ": " + lastSenderStr);
-            }
-        } else {
-            this.lastSender = null;
-        }
-
-        // Jeśli kolumna msgToggle nie istnieje w starszej wersji bazy, domyślnie false
-        try {
-            this.msgToggle = resultSet.getBoolean("msgToggle");
-        } catch (SQLException ignored) {
-            this.msgToggle = false;
-        }
     }
 
-    // Gettery i settery
     public UUID getIdentifier() {
         return this.identifier;
     }
@@ -121,7 +83,6 @@ public class User {
     }
 
     public int getPointsRequired() {
-        // używamy ConfigManager (nowa nazwa)
         return this.lvl * ConfigManager.getConfigManager().getPointsToLvlUp();
     }
 
@@ -208,28 +169,4 @@ public class User {
         return Bukkit.getPlayer(this.identifier);
     }
 
-    // Nowe metody dla wiadomości
-    public String getLastMessage() {
-        return lastMessage;
-    }
-
-    public void setLastMessage(String lastMessage) {
-        this.lastMessage = lastMessage;
-    }
-
-    public UUID getLastSender() {
-        return lastSender;
-    }
-
-    public void setLastSender(UUID lastSender) {
-        this.lastSender = lastSender;
-    }
-
-    public boolean isMsgToggle() {
-        return msgToggle;
-    }
-
-    public void setMsgToggle(boolean msgToggle) {
-        this.msgToggle = msgToggle;
-    }
 }

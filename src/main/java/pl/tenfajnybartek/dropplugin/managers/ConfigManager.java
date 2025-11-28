@@ -7,7 +7,6 @@ import pl.tenfajnybartek.dropplugin.objects.Chance;
 import pl.tenfajnybartek.dropplugin.utils.ItemBuilder;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ConfigManager {
     private final HashMap<String, Chance> chances;
@@ -91,8 +90,6 @@ public class ConfigManager {
         this.dbPass = getStringSafe(fc, "database.password", "");
         this.dbBase = getStringSafe(fc, "database.base", "minecraft");
         this.dbPort = getIntSafe(fc, "database.port", 3306);
-
-        // Nowe (opcjonalne) ustawienia puli DB z wartościami domyślnymi
         this.dbMaxPool = getIntSafe(fc, "database.maxPool", 10);
         this.dbConnectionTimeoutMs = getLongSafe(fc, "database.connectionTimeoutMs", 30000L);
         this.dbIdleTimeoutMs = getLongSafe(fc, "database.idleTimeoutMs", 600000L);
@@ -149,7 +146,6 @@ public class ConfigManager {
         this.maxLevelMessage = getStringSafe(fc, "settings.lvling.chatLevelMaxMessage", "");
         this.lvlUpMessage = getStringSafe(fc, "settings.lvling.chatLevelUpMessage", "");
 
-        // Tworzenie ItemBuilderów - zabezpieczamy przed nullami i niepoprawnymi materialami
         this.cobbleItem = createItemBuilderSafe(fc.getString("gui.cobble.item"), Material.COBBLESTONE);
         this.messagesItem = createItemBuilderSafe(fc.getString("gui.messages.item"), Material.PAPER);
         this.turboItem = createItemBuilderSafe(fc.getString("gui.turbos.item"), Material.GOLD_INGOT);
@@ -212,11 +208,6 @@ public class ConfigManager {
         this.plugin.saveConfig();
     }
 
-    /**
-     * Dodaje/ustawia turboDrop:
-     * - jeżeli 'turboDrop' wygląda jak timestamp (większy niż teraz) traktujemy go jako datę zakończenia,
-     * - w przeciwnym wypadku traktujemy go jak duration (ms) i ustawiamy turboDrop = now + duration.
-     */
     public void addTurboDrop(long turboDrop) {
         if (turboDrop > System.currentTimeMillis()) {
             this.turboDrop = turboDrop;
@@ -225,9 +216,6 @@ public class ConfigManager {
         }
     }
 
-    /**
-     * Analogicznie dla turboExp.
-     */
     public void addTurboExp(long turboExp) {
         if (turboExp > System.currentTimeMillis()) {
             this.turboExp = turboExp;
@@ -241,7 +229,6 @@ public class ConfigManager {
     public boolean isTurboDrop() { return this.getTurboDrop() > System.currentTimeMillis(); }
     public boolean isTurboExp() { return this.getTurboExp() > System.currentTimeMillis(); }
 
-    // --- gettery (pozostawione bez zmian, z wyjątkiem zwracania niemodyfikowalnych kolekcji) ---
     public String getMaxLevelMessage() { return this.maxLevelMessage; }
     public List<Integer> getChatLevels() { return this.chatLevels; }
     public String getLevelMessage() { return this.levelMessage; }

@@ -51,9 +51,6 @@ public final class ItemBuilder {
         this.itemStack.setItemMeta(this.itemMeta);
     }
 
-    /**
-     * Ustawia display name z legacy kolorami (&a, &l itp.).
-     */
     public ItemBuilder setName(String name) {
         if (name == null) return this;
         Component comp = LEGACY_SERIALIZER.deserialize(ChatUtils.colour(name));
@@ -63,9 +60,6 @@ public final class ItemBuilder {
         return this;
     }
 
-    /**
-     * Ustawia lore konwertując każdy string przez legacy serializer.
-     */
     public ItemBuilder setLore(List<String> lore) {
         if (lore == null) return this;
         List<Component> components = lore.stream()
@@ -91,16 +85,12 @@ public final class ItemBuilder {
         return this;
     }
 
-    /**
-     * Ustawia ilość w stacku (przydatne gdy konstruktor nie ustawił jej poprawnie).
-     */
     public ItemBuilder setAmount(int amount) {
         this.itemStack.setAmount(Math.max(1, amount));
         return this;
     }
 
     public ItemStack build() {
-        // upewniamy się, że meta jest zastosowane
         this.itemStack.setItemMeta(this.itemMeta);
         return this.itemStack;
     }

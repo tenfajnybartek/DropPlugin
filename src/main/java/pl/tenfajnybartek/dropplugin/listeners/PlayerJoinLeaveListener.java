@@ -14,13 +14,11 @@ public class PlayerJoinLeaveListener implements Listener {
 
     public PlayerJoinLeaveListener(DropPlugin plugin) {
         this.userManager = plugin.getUserManager();
-        // Nie rejestrujemy eventów tutaj — robi to centralnie DropPlugin.registerListeners()
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        // Utworzenie / załadowanie User do cache
         userManager.getUser(player);
     }
 
@@ -36,9 +34,7 @@ public class PlayerJoinLeaveListener implements Listener {
 
     private void saveAndCleanup(Player player) {
         if (player == null) return;
-        // Zapisz snapshot z cache (UserManager.save powinien zapisywać z userMap)
         userManager.save(player.getUniqueId());
-        // Opcjonalnie usuń z cache aby nie trzymać offline danych w pamięci
         userManager.removeUserFromCache(player.getUniqueId());
     }
 }

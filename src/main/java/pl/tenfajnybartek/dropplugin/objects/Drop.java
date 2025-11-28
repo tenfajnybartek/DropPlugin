@@ -4,9 +4,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
-/**
- * Reprezentuje pojedynczy drop.
- */
 public final class Drop {
     private final ItemStack itemStack;
     private final boolean fortune;

@@ -18,7 +18,6 @@ public final class ParserUtils {
     public static ItemStack parseItemStack(final String string) {
         if (string == null || string.isBlank()) return null;
 
-        // Domyślny item, będzie nadpisany przez material jeśli podane
         final ItemStack is = new ItemStack(Material.DIAMOND);
         final ItemMeta im = is.getItemMeta();
 
@@ -73,7 +72,6 @@ public final class ParserUtils {
                         NamespacedKey nsKey = new NamespacedKey(DropPlugin.getPlugin(DropPlugin.class), enchKey);
                         ench = Enchantment.getByKey(nsKey);
                     } catch (Throwable t) {
-                        // ignore - spróbujemy jeszcze getByName
                         ench = Enchantment.getByName(enchKey.toUpperCase());
                     }
                     try {

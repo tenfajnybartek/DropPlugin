@@ -8,11 +8,6 @@ import pl.tenfajnybartek.dropplugin.base.DropPlugin;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * Zarządzanie plikiem drops.yml (wcześniej DropConfig -> teraz DropConfigManager).
- * - zapisuje domyślny resource jeśli plik nie istnieje
- * - umożliwia dostęp do FileConfiguration oraz reload/save
- */
 public class DropConfigManager {
     private final FileConfiguration dropConfig;
     private final File file;
@@ -26,12 +21,10 @@ public class DropConfigManager {
             plugin.saveResource("drops.yml", false);
         }
 
-        // Bezpieczne wczytanie konfiguracji
         FileConfiguration cfg = new YamlConfiguration();
         try {
             cfg = YamlConfiguration.loadConfiguration(file);
         } catch (Exception e) {
-            // loadConfiguration nie rzuca zwykle IOException przy wczytywaniu, ale zostawiam fallback
             try {
                 ((YamlConfiguration) cfg).load(file);
             } catch (IOException | InvalidConfigurationException ex) {
