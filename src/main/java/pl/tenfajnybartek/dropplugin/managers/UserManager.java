@@ -28,6 +28,10 @@ public class UserManager {
         return prev != null ? prev : created;
     }
 
+    /**
+     * Zwraca User tylko jeżeli jest już załadowany w pamięci (cache).
+     * BEZPIECZNE do wywołania z wątków asynchronicznych.
+     */
     public User getUserIfLoaded(UUID uuid) {
         if (uuid == null) return null;
         return this.userMap.get(uuid);
@@ -44,7 +48,18 @@ public class UserManager {
         return null;
     }
 
+    /**
+     * Zapisuje użytkownika domyślnie asynchronicznie (tak jak było).
+     */
     public void save(UUID uuid) {
+        save(uuid, false); // domyślnie async
+    }
+
+    /**
+     * Zapisuje użytkownika synchronicznie lub asynchronicznie, w zależności od parametru sync.
+     * Używaj sync = true podczas wyłączania pluginu!
+     */
+    public void save(UUID uuid, boolean sync) {
         if (uuid == null) return;
         User user = this.userMap.get(uuid);
         if (user == null) {
@@ -57,7 +72,7 @@ public class UserManager {
 
         try {
             Database db = Database.getInstance();
-            if (db != null) db.saveUser(user);
+            if (db != null) db.saveUser(user, sync); // przekazujemy tryb dalej
         } catch (Exception e) {
             Bukkit.getLogger().warning("Błąd podczas zapisu użytkownika " + uuid + ": " + e.getMessage());
             e.printStackTrace();

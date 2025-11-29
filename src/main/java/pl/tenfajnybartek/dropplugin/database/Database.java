@@ -24,6 +24,7 @@ public class Database {
         this.logger = plugin.getLogger();
         database = this;
 
+        // Inicjalizacja asynchroniczna
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             this.logger.info("Łączenie z bazą danych...");
             ConfigManager config = plugin.getPluginConfig();
@@ -62,6 +63,7 @@ public class Database {
                 return;
             }
 
+            // Tworzenie tabeli jeśli nie istnieje
             try (Connection conn = ds.getConnection();
                  Statement st = conn.createStatement()) {
                 st.executeUpdate("CREATE TABLE IF NOT EXISTS `drop_users` (" +
@@ -82,28 +84,10 @@ public class Database {
                 e.printStackTrace();
             }
 
+            // Ładowanie użytkowników z bazy
             try (Connection conn = ds.getConnection();
                  PreparedStatement ps = conn.prepareStatement("SELECT * FROM drop_users");
                  ResultSet resultSet = ps.executeQuery()) {
-
-                while (resultSet.next()) {
-                    try {
-                        User dbUser = new User(resultSet);
-                        dbUser.setLastMessage(resultSet.getString("lastMessage"));
-                        String lastSenderStr = resultSet.getString("lastSender");
-                        if (lastSenderStr != null && !lastSenderStr.isEmpty()) {
-                            try {
-                                dbUser.setLastSender(UUID.fromString(lastSenderStr));
-                            } catch (IllegalArgumentException iae) {
-                                logger.warning("Niepoprawny lastSender UUID dla gracza " + dbUser.getIdentifier() + ": " + lastSenderStr);
-                            }
-                        }
-                        plugin.getUserManager().getUserMap().put(dbUser.getIdentifier(), dbUser);
-                    } catch (Exception e) {
-                        logger.warning("Błąd przy parsowaniu rekordu użytkownika: " + e.getMessage());
-                        e.printStackTrace();
-                    }
-                }
             } catch (SQLException e) {
                 this.logger.warning("Nie można załadować graczy z bazy danych!");
                 e.printStackTrace();
@@ -118,7 +102,7 @@ public class Database {
     }
 
     public void saveUser(User user) {
-        saveUser(user, false);
+        saveUser(user, false); // domyślnie async
     }
 
     public void saveUser(User user, boolean sync) {
@@ -141,12 +125,6 @@ public class Database {
                 preparedStatement.setInt(7, user.getPoints());
                 preparedStatement.setString(8, MapUtils.serializeMap(user.getMinedDrops()));
                 preparedStatement.setString(9, MapUtils.serializeList(user.getDisabledDrops()));
-                preparedStatement.setString(10, user.getLastMessage());
-                if (user.getLastSender() != null) {
-                    preparedStatement.setString(11, user.getLastSender().toString());
-                } else {
-                    preparedStatement.setNull(11, Types.VARCHAR);
-                }
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
@@ -156,12 +134,15 @@ public class Database {
         };
 
         if (sync) {
-            task.run();
+            task.run(); // natychmiast, bez schedulerów!
         } else {
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, task);
         }
     }
 
+    /**
+     * Wykonuje SELECT 1 aby utrzymać połączenie (asynchronicznie).
+     */
     public void sendEmptyUpdate() {
         if (ds == null) {
             logger.fine("DataSource nie zainicjalizowany - pomijam sendEmptyUpdate");
@@ -171,6 +152,7 @@ public class Database {
             try (Connection conn = ds.getConnection();
                  PreparedStatement statement = conn.prepareStatement("SELECT 1");
                  ResultSet rs = statement.executeQuery()) {
+                // nic do zrobienia, po prostu zapytanie
             } catch (Exception e) {
                 this.logger.warning("Nie można zaktualizować bazy danych!");
                 e.printStackTrace();
@@ -196,7 +178,7 @@ public class Database {
         };
 
         if (sync) {
-            task.run();
+            task.run(); // NATYCHMIASTOWE wykonie kodu bez schedulerów (SAFE na wyłączaniu pluginu)
         } else {
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, task);
         }

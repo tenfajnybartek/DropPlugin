@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 public class DropPlugin extends JavaPlugin {
     private Logger logger;
 
+    // Menedżery
     private UserManager userManager;
     private DropManager dropManager;
     private Database database;
@@ -39,14 +40,25 @@ public class DropPlugin extends JavaPlugin {
         try {
             long startTime = System.currentTimeMillis();
             this.logger.info("Initializacja pluginu tfbDrop...");
+
             this.configManager = new ConfigManager(this);
             this.dropConfig = new DropConfigManager(this);
+
+            // 1) najpierw utwórz userManager (cache), aby Database mogła bezpiecznie wrzucać dane
             this.userManager = new UserManager();
+
+            // 2) dopiero teraz uruchom Database (może wczytywać dane do userManager)
             this.database = new Database(this);
+
+            // 3) reszta managerów
             this.dropManager = new DropManager(this);
             this.dropMenu = new DropMenu(this);
+
+            // 4) uruchom zadanie okresowego zapisu i zachowaj referencję (tylko jeden egzemplarz)
             this.saverTask = new SaverTask(this);
             this.actionBarTask = new ActionBarTask(this);
+
+            // Rejestracja listenerów i komend
             registerListeners();
             registerCommands();
 
@@ -65,7 +77,8 @@ public class DropPlugin extends JavaPlugin {
             if (this.userManager != null) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     try {
-                        this.userManager.save(player.getUniqueId());
+                        // Podczas wyłączania zawsze synchronizuj zapis
+                        this.userManager.save(player.getUniqueId(), true);
                     } catch (Exception e) {
                         logger.warning("Błąd zapisu użytkownika " + player.getUniqueId() + ": " + e.getMessage());
                         e.printStackTrace();
@@ -81,7 +94,8 @@ public class DropPlugin extends JavaPlugin {
             }
             if (this.database != null) {
                 try {
-                    this.database.disconnect();
+                    // Podczas wyłączania zawsze synchronizuj rozłączanie
+                    this.database.disconnect(true);
                 } catch (Exception e) {
                     logger.warning("Błąd podczas rozłączania bazy danych: " + e.getMessage());
                     e.printStackTrace();
@@ -115,6 +129,7 @@ public class DropPlugin extends JavaPlugin {
         new LevelCommand(this);
     }
 
+    // Gettery
     public UserManager getUserManager() {
         return this.userManager;
     }
@@ -135,18 +150,21 @@ public class DropPlugin extends JavaPlugin {
         return this.database;
     }
 
+    // Nowy getter zwracający ConfigManager
     public ConfigManager getConfigManager() {
         return this.configManager;
     }
     public void reloadConfigManager() {
         this.configManager = new ConfigManager(this);
 
+        // zrestartuj actionbar task aby używał nowej konfiguracji (jeżeli włączony)
         if (this.actionBarTask != null) {
             this.actionBarTask.cancel();
             this.actionBarTask = null;
         }
         this.actionBarTask = new ActionBarTask(this);
     }
+    // Alias dla kompatybilności z dotychczasowym kodem, jeśli gdzieś wywołujesz getPluginConfig()
     public ConfigManager getPluginConfig() {
         return this.configManager;
     }
