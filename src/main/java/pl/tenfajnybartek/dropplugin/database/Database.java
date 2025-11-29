@@ -76,8 +76,6 @@ public class Database {
                         "points INT(11) NOT NULL, " +
                         "minedDrops TEXT NOT NULL, " +
                         "disabledDrops TEXT NOT NULL, " +
-                        "lastMessage VARCHAR(255), " +
-                        "lastSender VARCHAR(255), " +
                         "PRIMARY KEY(identifier));");
             } catch (SQLException e) {
                 this.logger.warning("Nie można utworzyć tabel w bazie danych!");
@@ -112,7 +110,7 @@ public class Database {
         }
 
         Runnable task = () -> {
-            String sql = "REPLACE INTO drop_users (identifier, cobble, messages, turboDrop, turboExp, lvl, points, minedDrops, disabledDrops, lastMessage, lastSender) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+            String sql = "REPLACE INTO drop_users (identifier, cobble, messages, turboDrop, turboExp, lvl, points, minedDrops, disabledDrops) VALUES (?,?,?,?,?,?,?,?,?)";
             try (Connection conn = ds.getConnection();
                  PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
