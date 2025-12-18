@@ -65,12 +65,14 @@ public final class Drop {
 
     /**
      * Normalizuje wartość szansy do zakresu 0.0-1.0.
-     * Nowa logika:
-     * - Wartości 0.0-1.0 → pozostają bez zmian (np. 0.6 = 0.6%)
-     * - Wartości > 1.0 → dzielone przez 100 (np. 60.0 = 60%)
+     * Wszystkie wartości są traktowane jako procenty i dzielone przez 100.
+     * Przykłady:
+     * - 1.2 → 0.012 (1.2% szansy)
+     * - 50.0 → 0.50 (50% szansy)
+     * - 0.5 → 0.005 (0.5% szansy)
      * 
-     * @param c Wartość szansy do znormalizowania
-     * @return Znormalizowana wartość szansy (0.0-1.0)
+     * @param c Wartość szansy w procentach (0.0-100.0)
+     * @return Znormalizowana wartość szansy jako prawdopodobieństwo (0.0-1.0)
      */
     private static double normalizeChance(double c) {
         if (c < 0.0) {
@@ -79,12 +81,8 @@ public final class Drop {
         if (c > 100.0) {
             throw new IllegalArgumentException("chance must be <= 100.0");
         }
-        // Wartości > 1.0 traktujemy jako procenty (dzielone przez 100)
-        if (c > 1.0) {
-            return c / 100.0;
-        }
-        // Wartości 0.0-1.0 pozostają bez zmian
-        return c;
+        // Wszystkie wartości są traktowane jako procenty i dzielone przez 100
+        return c / 100.0;
     }
 
     public String getName() {

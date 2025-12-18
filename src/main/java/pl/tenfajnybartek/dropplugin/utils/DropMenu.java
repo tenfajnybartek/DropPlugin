@@ -177,9 +177,10 @@ public class DropMenu {
             sumChance *= 2.0;
         }
 
-        entry = StringUtils.replace(entry, "{CHANCE}", String.valueOf(drop.getChance()));
-        entry = StringUtils.replace(entry, "{CHANCE-BONUS}", String.valueOf(bonus));
-        entry = StringUtils.replace(entry, "{CHANCE-SUM}", String.valueOf(sumChance));
+        // Konwertuj wartości prawdopodobieństwa (0.0-1.0) na procenty (0-100) do wyświetlenia
+        entry = StringUtils.replace(entry, "{CHANCE}", String.format("%.2f", drop.getChance() * 100.0));
+        entry = StringUtils.replace(entry, "{CHANCE-BONUS}", String.format("%.2f", bonus * 100.0));
+        entry = StringUtils.replace(entry, "{CHANCE-SUM}", String.format("%.2f", sumChance * 100.0));
         entry = StringUtils.replace(entry, "{HEIGHT-MIN}", String.valueOf(drop.getHeight().getMin()));
         entry = StringUtils.replace(entry, "{HEIGHT-MAX}", String.valueOf(drop.getHeight().getMax()));
         entry = StringUtils.replace(entry, "{EXP}", String.valueOf(drop.getExp()));

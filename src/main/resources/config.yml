@@ -80,22 +80,23 @@ settings:
   # Bonusy do szansy na drop z permisji (sprawdzane na żywo, działają bez restartu)
   # Format: każdy klucz to nazwa grupy z jej ustawieniami
   # permission: permisja która jest sprawdzana (np. dropplugin.vip)
-  # additionalchance: dodatkowa szansa w procentach (np. 0.5 = +0.5% szansy do każdego dropu)
+  # additionalchance: dodatkowa szansa w PROCENTACH (np. 0.5 = +0.5%, 5.0 = +5%)
   # 
   # Przykład: gracz z permisją dropplugin.vip otrzyma +0.5% szansy na każdy drop
+  # Wartości są automatycznie konwertowane (0.5 → 0.005 wewnętrznie, ale wyświetlane jako 0.5%)
   # Można dodać więcej grup (np. premium, mvp) z różnymi permisami i wartościami
   # 
   # Przykład wielu grup:
   # chances:
   #   vip:
   #     permission: dropplugin.vip
-  #     additionalchance: 0.5
+  #     additionalchance: 0.5    # +0.5% szansy
   #   premium:
   #     permission: dropplugin.premium
-  #     additionalchance: 1.0
+  #     additionalchance: 1.0    # +1.0% szansy
   #   mvp:
   #     permission: dropplugin.mvp
-  #     additionalchance: 2.0
+  #     additionalchance: 5.0    # +5.0% szansy
   chances:
     vip:
       permission: dropplugin.vip
