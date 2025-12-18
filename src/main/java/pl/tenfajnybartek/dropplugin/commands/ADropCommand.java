@@ -15,6 +15,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ADropCommand implements CommandExecutor {
+    // Limity dla komendy /adrop level
+    private static final int MIN_LEVEL = 1;
+    private static final int MAX_LEVEL = 1000;
+    private static final int MIN_POINTS = 0;
+    private static final int MAX_POINTS = 1000000;
+    
     private final List<String> usage;
     private final UserManager userManager;
     private final DropPlugin plugin;
@@ -138,8 +144,8 @@ public class ADropCommand implements CommandExecutor {
 
                 try {
                     newLevel = Integer.parseInt(args[2]);
-                    if (newLevel < 1 || newLevel > 1000) {
-                        ChatUtils.sendMessage(sender, "&4Blad: &cPoziom musi byc miedzy 1 a 1000!");
+                    if (newLevel < MIN_LEVEL || newLevel > MAX_LEVEL) {
+                        ChatUtils.sendMessage(sender, "&4Blad: &cPoziom musi byc miedzy " + MIN_LEVEL + " a " + MAX_LEVEL + "!");
                         return true;
                     }
                 } catch (NumberFormatException e) {
@@ -150,8 +156,8 @@ public class ADropCommand implements CommandExecutor {
                 if (args.length >= 4) {
                     try {
                         newPoints = Integer.parseInt(args[3]);
-                        if (newPoints < 0 || newPoints > 1000000) {
-                            ChatUtils.sendMessage(sender, "&4Blad: &cPunkty musza byc miedzy 0 a 1000000!");
+                        if (newPoints < MIN_POINTS || newPoints > MAX_POINTS) {
+                            ChatUtils.sendMessage(sender, "&4Blad: &cPunkty musza byc miedzy " + MIN_POINTS + " a " + MAX_POINTS + "!");
                             return true;
                         }
                     } catch (NumberFormatException e) {

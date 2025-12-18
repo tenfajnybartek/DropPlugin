@@ -45,15 +45,17 @@ public final class ItemUtils {
         int maxDurability = item.getType().getMaxDurability();
         if (maxDurability <= 0) return;
 
-        // Unbreaking ma szansę na uniknięcie uszkodzenia
+        // Unbreaking ma szansę na uniknięcie uszkodzenia według mechaniki Minecrafta
         int enchantLevel = item.getEnchantmentLevel(Enchantment.UNBREAKING);
         boolean shouldDamage = true;
         
         if (enchantLevel > 0) {
-            // Szansa na uniknięcie uszkodzenia: 100/(level+1) %
-            int chance = 100 / (enchantLevel + 1);
-            if (RandomUtils.getRandInt(0, 100) < chance) {
-                shouldDamage = false;
+            // W Minecraft: szansa na otrzymanie uszkodzenia = 100/(level+1) %
+            // Więc szansa na UNIKNIĘCIE uszkodzenia = 1 - 100/(level+1) %
+            int damageChance = 100 / (enchantLevel + 1);
+            int roll = RandomUtils.getRandInt(0, 100);
+            if (roll >= damageChance) {
+                shouldDamage = false; // Uniknięto uszkodzenia
             }
         }
         

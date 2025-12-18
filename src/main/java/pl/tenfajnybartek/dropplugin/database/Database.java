@@ -91,8 +91,11 @@ public class Database {
                 while (resultSet.next()) {
                     try {
                         User user = new User(resultSet);
-                        plugin.getUserManager().getUserMap().put(user.getIdentifier(), user);
-                        loadedUsers++;
+                        if (plugin.getUserManager().loadUser(user)) {
+                            loadedUsers++;
+                        } else {
+                            this.logger.warning("Użytkownik " + user.getIdentifier() + " już istnieje w cache");
+                        }
                     } catch (Exception e) {
                         this.logger.warning("Nie można załadować użytkownika: " + e.getMessage());
                         e.printStackTrace();

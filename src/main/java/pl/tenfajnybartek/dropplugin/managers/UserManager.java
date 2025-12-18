@@ -94,6 +94,28 @@ public class UserManager {
         this.userMap.remove(uuid);
     }
 
+    /**
+     * Ładuje użytkownika do cache.
+     * Używane przy wczytywaniu danych z bazy danych.
+     * 
+     * @param user Użytkownik do załadowania
+     * @return true jeśli użytkownik został załadowany, false jeśli już istniał
+     */
+    public boolean loadUser(User user) {
+        if (user == null || user.getIdentifier() == null) {
+            return false;
+        }
+        User existing = this.userMap.putIfAbsent(user.getIdentifier(), user);
+        return existing == null; // true jeśli był nowy, false jeśli już istniał
+    }
+
+    /**
+     * Zwraca mapę użytkowników.
+     * UWAGA: Używaj tej metody tylko do odczytu (np. liczenia użytkowników).
+     * Do modyfikacji używaj dedykowanych metod jak loadUser().
+     * 
+     * @return Niemodyfikowalna mapa użytkowników
+     */
     public Map<UUID, User> getUserMap() {
         return this.userMap;
     }

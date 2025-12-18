@@ -49,7 +49,14 @@ public final class Drop {
         this.height = height;
         this.amount = amount;
         this.points = points;
-        this.exp = Math.max(0, exp); // exp nie może być ujemne
+        
+        // Ostrzeżenie gdy exp jest ujemne
+        if (exp < 0) {
+            System.err.println("WARNING: Drop '" + name + "' ma ujemne exp (" + exp + "), ustawiono na 0");
+            this.exp = 0;
+        } else {
+            this.exp = exp;
+        }
     }
 
     private static double normalizeChance(double c) {
