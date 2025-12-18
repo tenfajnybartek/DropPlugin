@@ -84,6 +84,18 @@ settings:
   # 
   # Przykład: gracz z permisją dropplugin.vip otrzyma +0.5% szansy na każdy drop
   # Można dodać więcej grup (np. premium, mvp) z różnymi permisami i wartościami
+  # 
+  # Przykład wielu grup:
+  # chances:
+  #   vip:
+  #     permission: dropplugin.vip
+  #     additionalchance: 0.5
+  #   premium:
+  #     permission: dropplugin.premium
+  #     additionalchance: 1.0
+  #   mvp:
+  #     permission: dropplugin.mvp
+  #     additionalchance: 2.0
   chances:
     vip:
       permission: dropplugin.vip
