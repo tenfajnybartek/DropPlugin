@@ -11,9 +11,6 @@ import pl.tenfajnybartek.dropplugin.objects.User;
 import pl.tenfajnybartek.dropplugin.utils.ChatUtils;
 import pl.tenfajnybartek.dropplugin.utils.DataUtils;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class ADropCommand implements CommandExecutor {
     // Limity dla komendy /adrop level
     private static final int MIN_LEVEL = 1;
@@ -21,21 +18,12 @@ public class ADropCommand implements CommandExecutor {
     private static final int MIN_POINTS = 0;
     private static final int MAX_POINTS = 1000000;
     
-    private final List<String> usage;
     private final UserManager userManager;
     private final DropPlugin plugin;
 
     public ADropCommand(DropPlugin plugin) {
         this.plugin = plugin;
         this.userManager = plugin.getUserManager();
-        this.usage = Arrays.asList(
-                "&6Dostepne komendy dla adminow",
-                "&&6/adrop <drop/exp> <all> <time> &7- Nadaje turbo dla calego serwera.",
-                "&6/adrop <drop/exp> <player> <time> &7- Nadaje turbo dla jednego gracza.",
-                "&6/adrop reload - &7Przeladowywuje config",
-                "&6/adrop level <nick_gracza> <poziom> <pkt> &7- Ustawia poziom gracza.",
-                "&7Standardowo 1 lvl - 0pkt, pamietaj x lvl * 500."
-        );
 
         if (plugin.getCommand("adrop") != null) {
             plugin.getCommand("adrop").setExecutor(this);
@@ -46,13 +34,15 @@ public class ADropCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        var config = this.plugin.getPluginConfig();
+        
         if (!sender.hasPermission("dropplugin.cmd.adrop")) {
-            ChatUtils.sendMessage(sender, "&4Blad: &cNie masz uprawnien do tej komendy! &7(dropplugin.cmd.adrop)");
+            ChatUtils.sendMessage(sender, config.getCmdADropNoPermission());
             return true;
         }
 
         if (args.length < 1) {
-            this.usage.forEach(m -> ChatUtils.sendMessage(sender, m));
+            config.getCmdADropUsage().forEach(m -> ChatUtils.sendMessage(sender, m));
             return true;
         }
 
@@ -60,12 +50,13 @@ public class ADropCommand implements CommandExecutor {
         switch (sub) {
             case "reload": {
                 long start = System.currentTimeMillis();
-                ChatUtils.sendMessage(sender, "&7Przeladowywanie...");
+                ChatUtils.sendMessage(sender, config.getCmdADropReloading());
                 try {
                     this.plugin.reloadConfigManager();
-                    ChatUtils.sendMessage(sender, "&eDrop &7przeladowano! (" + (float) (System.currentTimeMillis() - start) / 1000.0f + "s)");
+                    float time = (float) (System.currentTimeMillis() - start) / 1000.0f;
+                    ChatUtils.sendMessage(sender, config.getCmdADropReloaded().replace("{TIME}", String.valueOf(time)));
                 } catch (Throwable t) {
-                    ChatUtils.sendMessage(sender, "&4Blad: &cNie udalo sie przeladowac konfiguracji.");
+                    ChatUtils.sendMessage(sender, config.getCmdADropReloadError());
                     this.plugin.getLogger().severe("Error while reloading config: " + t.getMessage());
                     t.printStackTrace();
                 }
@@ -75,21 +66,19 @@ public class ADropCommand implements CommandExecutor {
             case "drop":
             case "exp": {
                 if (args.length < 3) {
-                    this.usage.forEach(m -> ChatUtils.sendMessage(sender, m));
+                    config.getCmdADropUsage().forEach(m -> ChatUtils.sendMessage(sender, m));
                     return true;
                 }
                 String target = args[1];
                 String timeStr = args[2];
                 long time = DataUtils.parseDateDiff(timeStr, true);
                 if (time <= 0L) {
-                    ChatUtils.sendMessage(sender, "&4Blad: &cNiepoprawny czas: " + timeStr);
+                    ChatUtils.sendMessage(sender, config.getCmdADropInvalidTime().replace("{TIME}", timeStr));
                     return true;
                 }
 
                 boolean isDrop = sub.equals("drop");
                 String typeName = isDrop ? "TurboDrop" : "TurboExp";
-
-                var config = this.plugin.getPluginConfig();
 
                 if ("all".equalsIgnoreCase(target)) {
                     if (isDrop) {
@@ -105,19 +94,21 @@ public class ADropCommand implements CommandExecutor {
                             .replace("{TYPE}", typeName)
                             .replace("{TIME}", timeStr);
                     Bukkit.getOnlinePlayers().forEach(player -> ChatUtils.sendMessage(player, broadcast));
-                    ChatUtils.sendMessage(sender, "&aWlaczyles " + typeName + " na: " + timeStr);
+                    ChatUtils.sendMessage(sender, config.getCmdADropTurboEnabled()
+                            .replace("{TYPE}", typeName)
+                            .replace("{TIME}", timeStr));
                     return true;
                 }
 
                 Player targetPlayer = Bukkit.getPlayer(target);
                 if (targetPlayer == null) {
-                    ChatUtils.sendMessage(sender, "&4Blad: &cGracz jest offline!");
+                    ChatUtils.sendMessage(sender, config.getCmdADropPlayerOffline());
                     return true;
                 }
 
                 User user = this.userManager.getUser(targetPlayer);
                 if (user == null) {
-                    ChatUtils.sendMessage(sender, "&4Blad: &cNie mozna zaladowac danych gracza!");
+                    ChatUtils.sendMessage(sender, config.getCmdADropPlayerDataError());
                     return true;
                 }
 
@@ -128,13 +119,16 @@ public class ADropCommand implements CommandExecutor {
                 }
 
                 ChatUtils.sendMessage(targetPlayer, config.getTurboGetMessage().replace("{TYPE}", typeName).replace("{TIME}", timeStr));
-                ChatUtils.sendMessage(sender, "&aWlaczyles " + typeName + " na: " + timeStr + " dla: " + targetPlayer.getName());
+                ChatUtils.sendMessage(sender, config.getCmdADropTurboEnabledFor()
+                        .replace("{TYPE}", typeName)
+                        .replace("{TIME}", timeStr)
+                        .replace("{PLAYER}", targetPlayer.getName()));
                 return true;
             }
 
             case "level": {
                 if (args.length < 3) {
-                    this.usage.forEach(m -> ChatUtils.sendMessage(sender, m));
+                    config.getCmdADropUsage().forEach(m -> ChatUtils.sendMessage(sender, m));
                     return true;
                 }
 
@@ -145,11 +139,13 @@ public class ADropCommand implements CommandExecutor {
                 try {
                     newLevel = Integer.parseInt(args[2]);
                     if (newLevel < MIN_LEVEL || newLevel > MAX_LEVEL) {
-                        ChatUtils.sendMessage(sender, "&4Blad: &cPoziom musi byc miedzy " + MIN_LEVEL + " a " + MAX_LEVEL + "!");
+                        ChatUtils.sendMessage(sender, config.getCmdADropLevelMinMax()
+                                .replace("{MIN}", String.valueOf(MIN_LEVEL))
+                                .replace("{MAX}", String.valueOf(MAX_LEVEL)));
                         return true;
                     }
                 } catch (NumberFormatException e) {
-                    ChatUtils.sendMessage(sender, "&4Blad: &cPodany poziom nie jest liczba!");
+                    ChatUtils.sendMessage(sender, config.getCmdADropLevelNotNumber());
                     return true;
                 }
 
@@ -157,24 +153,26 @@ public class ADropCommand implements CommandExecutor {
                     try {
                         newPoints = Integer.parseInt(args[3]);
                         if (newPoints < MIN_POINTS || newPoints > MAX_POINTS) {
-                            ChatUtils.sendMessage(sender, "&4Blad: &cPunkty musza byc miedzy " + MIN_POINTS + " a " + MAX_POINTS + "!");
+                            ChatUtils.sendMessage(sender, config.getCmdADropPointsMinMax()
+                                    .replace("{MIN}", String.valueOf(MIN_POINTS))
+                                    .replace("{MAX}", String.valueOf(MAX_POINTS)));
                             return true;
                         }
                     } catch (NumberFormatException e) {
-                        ChatUtils.sendMessage(sender, "&4Blad: &cPodane punkty nie sa liczba!");
+                        ChatUtils.sendMessage(sender, config.getCmdADropPointsNotNumber());
                         return true;
                     }
                 }
 
                 Player targetPlayer = Bukkit.getPlayer(targetName);
                 if (targetPlayer == null) {
-                    ChatUtils.sendMessage(sender, "&4Blad: &cGracz jest offline!");
+                    ChatUtils.sendMessage(sender, config.getCmdADropPlayerOffline());
                     return true;
                 }
 
                 User targetUser = this.userManager.getUser(targetPlayer);
                 if (targetUser == null) {
-                    ChatUtils.sendMessage(sender, "&4Blad: &cNie mozna zaladowac danych gracza!");
+                    ChatUtils.sendMessage(sender, config.getCmdADropPlayerDataError());
                     return true;
                 }
 
@@ -182,15 +180,16 @@ public class ADropCommand implements CommandExecutor {
                 targetUser.setLvl(newLevel);
                 targetUser.setPoints(newPoints);
 
-                ChatUtils.sendMessage(sender,
-                        "&aZmieniono poziom gracza &7" + targetPlayer.getName() +
-                                " &az &7" + currentLevel + " &ana &7" + newLevel +
-                                " &ai ustawiono punkty na &7" + newPoints);
+                ChatUtils.sendMessage(sender, config.getCmdADropLevelChanged()
+                        .replace("{PLAYER}", targetPlayer.getName())
+                        .replace("{OLD_LEVEL}", String.valueOf(currentLevel))
+                        .replace("{NEW_LEVEL}", String.valueOf(newLevel))
+                        .replace("{POINTS}", String.valueOf(newPoints)));
                 return true;
             }
 
             default: {
-                this.usage.forEach(m -> ChatUtils.sendMessage(sender, m));
+                config.getCmdADropUsage().forEach(m -> ChatUtils.sendMessage(sender, m));
                 return true;
             }
         }

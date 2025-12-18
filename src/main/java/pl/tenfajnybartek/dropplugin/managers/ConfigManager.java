@@ -35,6 +35,43 @@ public class ConfigManager {
     private final String maxLevelMessage;
     private final String levelMessage;
     private final String actionbarMessage;
+    
+    // Command messages - DropCommand
+    private final String cmdDropNoPermission;
+    private final String cmdDropOnlyPlayers;
+    
+    // Command messages - ADropCommand
+    private final String cmdADropNoPermission;
+    private final List<String> cmdADropUsage;
+    private final String cmdADropReloading;
+    private final String cmdADropReloaded;
+    private final String cmdADropReloadError;
+    private final String cmdADropInvalidTime;
+    private final String cmdADropTurboEnabled;
+    private final String cmdADropTurboEnabledFor;
+    private final String cmdADropPlayerOffline;
+    private final String cmdADropPlayerDataError;
+    private final String cmdADropLevelMinMax;
+    private final String cmdADropLevelNotNumber;
+    private final String cmdADropPointsMinMax;
+    private final String cmdADropPointsNotNumber;
+    private final String cmdADropLevelChanged;
+    
+    // Command messages - LevelCommand
+    private final String cmdLevelNoPermission;
+    private final String cmdLevelNoALevelPermission;
+    private final String cmdLevelOnlyPlayers;
+    private final String cmdLevelPlayerDataError;
+    private final String cmdLevelTargetPlayerDataError;
+    private final String cmdLevelPlayerOffline;
+    private final String cmdLevelUsage;
+    private final String cmdLevelNoData;
+    private final String cmdLevelHeader;
+    private final String cmdLevelNick;
+    private final String cmdLevelLevelPoints;
+    private final String cmdLevelPointsToNext;
+    private final String cmdLevelFooter;
+    
     private final ItemBuilder cobbleItem;
     private final ItemBuilder messagesItem;
     private final ItemBuilder turboItem;
@@ -115,6 +152,41 @@ public class ConfigManager {
         this.messageInvFull = getStringSafe(fc, "settings.toinv.messageFullInv", "");
         this.actionbarStatus = getBooleanSafe(fc, "settings.actionbar.status", false);
         this.actionbarMessage = getStringSafe(fc, "settings.actionbar.message", "");
+        
+        // Load command messages
+        this.cmdDropNoPermission = getStringSafe(fc, "messages.commands.drop.no-permission", "&4Blad: &cNie masz uprawnien do tej komendy! &7(dropplugin.cmd.drop)");
+        this.cmdDropOnlyPlayers = getStringSafe(fc, "messages.commands.drop.only-players", "&4Blad: &cTa komenda moze byc uzywana tylko przez graczy.");
+        
+        this.cmdADropNoPermission = getStringSafe(fc, "messages.commands.adrop.no-permission", "&4Blad: &cNie masz uprawnien do tej komendy! &7(dropplugin.cmd.adrop)");
+        this.cmdADropUsage = List.copyOf(getStringListSafe(fc, "messages.commands.adrop.usage"));
+        this.cmdADropReloading = getStringSafe(fc, "messages.commands.adrop.reloading", "&7Przeladowywanie...");
+        this.cmdADropReloaded = getStringSafe(fc, "messages.commands.adrop.reloaded", "&eDrop &7przeladowano! ({TIME}s)");
+        this.cmdADropReloadError = getStringSafe(fc, "messages.commands.adrop.reload-error", "&4Blad: &cNie udalo sie przeladowac konfiguracji.");
+        this.cmdADropInvalidTime = getStringSafe(fc, "messages.commands.adrop.invalid-time", "&4Blad: &cNiepoprawny czas: {TIME}");
+        this.cmdADropTurboEnabled = getStringSafe(fc, "messages.commands.adrop.turbo-enabled", "&aWlaczyles {TYPE} na: {TIME}");
+        this.cmdADropTurboEnabledFor = getStringSafe(fc, "messages.commands.adrop.turbo-enabled-for", "&aWlaczyles {TYPE} na: {TIME} dla: {PLAYER}");
+        this.cmdADropPlayerOffline = getStringSafe(fc, "messages.commands.adrop.player-offline", "&4Blad: &cGracz jest offline!");
+        this.cmdADropPlayerDataError = getStringSafe(fc, "messages.commands.adrop.player-data-error", "&4Blad: &cNie mozna zaladowac danych gracza!");
+        this.cmdADropLevelMinMax = getStringSafe(fc, "messages.commands.adrop.level-min-max", "&4Blad: &cPoziom musi byc miedzy {MIN} a {MAX}!");
+        this.cmdADropLevelNotNumber = getStringSafe(fc, "messages.commands.adrop.level-not-number", "&4Blad: &cPodany poziom nie jest liczba!");
+        this.cmdADropPointsMinMax = getStringSafe(fc, "messages.commands.adrop.points-min-max", "&4Blad: &cPunkty musza byc miedzy {MIN} a {MAX}!");
+        this.cmdADropPointsNotNumber = getStringSafe(fc, "messages.commands.adrop.points-not-number", "&4Blad: &cPodane punkty nie sa liczba!");
+        this.cmdADropLevelChanged = getStringSafe(fc, "messages.commands.adrop.level-changed", "&aZmieniono poziom gracza &7{PLAYER} &az &7{OLD_LEVEL} &ana &7{NEW_LEVEL} &ai ustawiono punkty na &7{POINTS}");
+        
+        this.cmdLevelNoPermission = getStringSafe(fc, "messages.commands.level.no-permission", "&4Blad: &cNie masz uprawnien do tej komendy! &7(dropplugin.cmd.level)");
+        this.cmdLevelNoALevelPermission = getStringSafe(fc, "messages.commands.level.no-alevel-permission", "&4Blad: &cNie masz uprawnien do sprawdzania innych graczy! &7(dropplugin.cmd.alevel)");
+        this.cmdLevelOnlyPlayers = getStringSafe(fc, "messages.commands.level.only-players", "&4Blad: &cTa komenda moze byc uzyta tylko przez graczy.");
+        this.cmdLevelPlayerDataError = getStringSafe(fc, "messages.commands.level.player-data-error", "&4Blad: &cNie mozna zaladowac Twoich danych!");
+        this.cmdLevelTargetPlayerDataError = getStringSafe(fc, "messages.commands.level.target-player-data-error", "&4Blad: &cNie mozna zaladowac danych podanego gracza!");
+        this.cmdLevelPlayerOffline = getStringSafe(fc, "messages.commands.level.player-offline", "&4Blad: &cPodany gracz nie jest online!");
+        this.cmdLevelUsage = getStringSafe(fc, "messages.commands.level.usage", "&cPoprawne uzycie: &7/level [nick_gracza]");
+        this.cmdLevelNoData = getStringSafe(fc, "messages.commands.level.no-data", "&4Blad: &cBrak danych gracza.");
+        this.cmdLevelHeader = getStringSafe(fc, "messages.commands.level.header", "&8&m-----------------&8[ &f&lPOZIOM GRACZA &8]&8&m-----------------");
+        this.cmdLevelNick = getStringSafe(fc, "messages.commands.level.nick", " &8* &7Nick: &e{PLAYER}");
+        this.cmdLevelLevelPoints = getStringSafe(fc, "messages.commands.level.level-points", " &8* &7Aktualny poziom kopania: &a{LEVEL} &7, punkty: &6{POINTS}");
+        this.cmdLevelPointsToNext = getStringSafe(fc, "messages.commands.level.points-to-next", " &8* &7Do nastepnego poziomu brakuje: &c{POINTS_TO_NEXT}");
+        this.cmdLevelFooter = getStringSafe(fc, "messages.commands.level.footer", "&8&m-----------------&8[ &f&lPOZIOM GRACZA &8]&8&m-----------------");
+        
         this.guiStatusOn = getStringSafe(fc, "gui.status.enable", "ON");
         this.guiStatusOff = getStringSafe(fc, "gui.status.disable", "OFF");
         this.guiItemName = getStringSafe(fc, "gui.item.name", "");
@@ -163,12 +235,32 @@ public class ConfigManager {
         this.lockedItem = createItemBuilderSafe(fc.getString("gui.locked.item"), Material.MAGMA_CREAM);
 
         this.chances = new HashMap<>();
-        for (String s : fc.getStringList("settings.chances")) {
-            String[] split = s.split("@");
-            if (split.length >= 2) {
-                try {
-                    this.chances.put(split[0], new Chance(split[0], Double.parseDouble(split[1])));
-                } catch (NumberFormatException ignore) {
+        
+        // Sprawdź czy używamy nowego formatu (ConfigurationSection) czy starego (List<String>)
+        if (fc.isConfigurationSection("settings.chances")) {
+            // Nowy format: chances jako sekcja konfiguracyjna
+            var chancesSection = fc.getConfigurationSection("settings.chances");
+            if (chancesSection != null) {
+                for (String key : chancesSection.getKeys(false)) {
+                    var chanceSection = chancesSection.getConfigurationSection(key);
+                    if (chanceSection != null) {
+                        String perm = chanceSection.getString("permission");
+                        Double additionalChance = chanceSection.getDouble("additionalchance", 0.0);
+                        if (perm != null) {
+                            this.chances.put(key, new Chance(key, perm, additionalChance));
+                        }
+                    }
+                }
+            }
+        } else {
+            // Stary format dla wstecznej kompatybilności: chances jako lista stringów
+            for (String s : fc.getStringList("settings.chances")) {
+                String[] split = s.split("@");
+                if (split.length >= 2) {
+                    try {
+                        this.chances.put(split[0], new Chance(split[0], Double.parseDouble(split[1])));
+                    } catch (NumberFormatException ignore) {
+                    }
                 }
             }
         }
@@ -306,4 +398,40 @@ public class ConfigManager {
     public boolean isFillerStatus() { return this.fillerStatus; }
     public boolean isLvlStatus() { return this.lvlStatus; }
     public boolean isActionbarStatus() { return this.actionbarStatus; }
+    
+    // Command messages getters - DropCommand
+    public String getCmdDropNoPermission() { return this.cmdDropNoPermission; }
+    public String getCmdDropOnlyPlayers() { return this.cmdDropOnlyPlayers; }
+    
+    // Command messages getters - ADropCommand
+    public String getCmdADropNoPermission() { return this.cmdADropNoPermission; }
+    public List<String> getCmdADropUsage() { return this.cmdADropUsage; }
+    public String getCmdADropReloading() { return this.cmdADropReloading; }
+    public String getCmdADropReloaded() { return this.cmdADropReloaded; }
+    public String getCmdADropReloadError() { return this.cmdADropReloadError; }
+    public String getCmdADropInvalidTime() { return this.cmdADropInvalidTime; }
+    public String getCmdADropTurboEnabled() { return this.cmdADropTurboEnabled; }
+    public String getCmdADropTurboEnabledFor() { return this.cmdADropTurboEnabledFor; }
+    public String getCmdADropPlayerOffline() { return this.cmdADropPlayerOffline; }
+    public String getCmdADropPlayerDataError() { return this.cmdADropPlayerDataError; }
+    public String getCmdADropLevelMinMax() { return this.cmdADropLevelMinMax; }
+    public String getCmdADropLevelNotNumber() { return this.cmdADropLevelNotNumber; }
+    public String getCmdADropPointsMinMax() { return this.cmdADropPointsMinMax; }
+    public String getCmdADropPointsNotNumber() { return this.cmdADropPointsNotNumber; }
+    public String getCmdADropLevelChanged() { return this.cmdADropLevelChanged; }
+    
+    // Command messages getters - LevelCommand
+    public String getCmdLevelNoPermission() { return this.cmdLevelNoPermission; }
+    public String getCmdLevelNoALevelPermission() { return this.cmdLevelNoALevelPermission; }
+    public String getCmdLevelOnlyPlayers() { return this.cmdLevelOnlyPlayers; }
+    public String getCmdLevelPlayerDataError() { return this.cmdLevelPlayerDataError; }
+    public String getCmdLevelTargetPlayerDataError() { return this.cmdLevelTargetPlayerDataError; }
+    public String getCmdLevelPlayerOffline() { return this.cmdLevelPlayerOffline; }
+    public String getCmdLevelUsage() { return this.cmdLevelUsage; }
+    public String getCmdLevelNoData() { return this.cmdLevelNoData; }
+    public String getCmdLevelHeader() { return this.cmdLevelHeader; }
+    public String getCmdLevelNick() { return this.cmdLevelNick; }
+    public String getCmdLevelLevelPoints() { return this.cmdLevelLevelPoints; }
+    public String getCmdLevelPointsToNext() { return this.cmdLevelPointsToNext; }
+    public String getCmdLevelFooter() { return this.cmdLevelFooter; }
 }

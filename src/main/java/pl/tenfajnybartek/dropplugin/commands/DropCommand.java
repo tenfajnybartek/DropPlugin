@@ -10,8 +10,10 @@ import pl.tenfajnybartek.dropplugin.utils.DropMenu;
 
 public class DropCommand implements CommandExecutor {
     private final DropMenu dropMenu;
+    private final DropPlugin plugin;
 
     public DropCommand(DropPlugin plugin) {
+        this.plugin = plugin;
         this.dropMenu = plugin.getDropMenu();
         if (plugin.getCommand("drop") != null) {
             plugin.getCommand("drop").setExecutor(this);
@@ -23,12 +25,12 @@ public class DropCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission("dropplugin.cmd.drop")) {
-            ChatUtils.sendMessage(sender, "&4Blad: &cNie masz uprawnien do tej komendy! &7(tfbhc.cmd.drop)");
+            ChatUtils.sendMessage(sender, this.plugin.getPluginConfig().getCmdDropNoPermission());
             return true;
         }
 
         if (!(sender instanceof Player)) {
-            ChatUtils.sendMessage(sender, "&4Blad: &cTa komenda moze byc uzywana tylko przez graczy.");
+            ChatUtils.sendMessage(sender, this.plugin.getPluginConfig().getCmdDropOnlyPlayers());
             return true;
         }
 

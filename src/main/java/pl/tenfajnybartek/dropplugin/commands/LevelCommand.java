@@ -13,8 +13,10 @@ import pl.tenfajnybartek.dropplugin.utils.ChatUtils;
 public class LevelCommand implements CommandExecutor {
 
     private final UserManager userManager;
+    private final DropPlugin plugin;
 
     public LevelCommand(DropPlugin plugin) {
+        this.plugin = plugin;
         this.userManager = plugin.getUserManager();
         if (plugin.getCommand("level") != null) {
             plugin.getCommand("level").setExecutor(this);
@@ -25,64 +27,69 @@ public class LevelCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        var config = this.plugin.getPluginConfig();
+        
         if (!sender.hasPermission("dropplugin.cmd.level")) {
-            ChatUtils.sendMessage(sender, "&4Blad: &cNie masz uprawnien do tej komendy! &7(tfbhc.cmd.level)");
+            ChatUtils.sendMessage(sender, config.getCmdLevelNoPermission());
             return true;
         }
 
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
-                ChatUtils.sendMessage(sender, "&4Blad: &cTa komenda moze byc uzyta tylko przez graczy.");
+                ChatUtils.sendMessage(sender, config.getCmdLevelOnlyPlayers());
                 return true;
             }
             Player player = (Player) sender;
             User u = this.userManager.getUser(player);
             if (u == null) {
-                ChatUtils.sendMessage(sender, "&4Blad: &cNie mozna zaladowac Twoich danych!");
+                ChatUtils.sendMessage(sender, config.getCmdLevelPlayerDataError());
                 return true;
             }
-            displayPlayerInfo(sender, u);
+            displayPlayerInfo(sender, u, config);
             return true;
         }
 
         if (args.length == 1) {
             if (!sender.hasPermission("dropplugin.cmd.alevel")) {
-                ChatUtils.sendMessage(sender, "&4Blad: &cNie masz uprawnien do sprawdzania innych graczy! &7(tfbhc.cmd.alevel)");
+                ChatUtils.sendMessage(sender, config.getCmdLevelNoALevelPermission());
                 return true;
             }
 
             Player targetPlayer = Bukkit.getPlayer(args[0]);
             if (targetPlayer == null) {
-                ChatUtils.sendMessage(sender, "&4Blad: &cPodany gracz nie jest online!");
+                ChatUtils.sendMessage(sender, config.getCmdLevelPlayerOffline());
                 return true;
             }
 
             User targetUser = this.userManager.getUser(targetPlayer);
             if (targetUser == null) {
-                ChatUtils.sendMessage(sender, "&4Blad: &cNie mozna zaladowac danych podanego gracza!");
+                ChatUtils.sendMessage(sender, config.getCmdLevelTargetPlayerDataError());
                 return true;
             }
 
-            displayPlayerInfo(sender, targetUser);
+            displayPlayerInfo(sender, targetUser, config);
             return true;
         }
 
-        ChatUtils.sendMessage(sender, "&cPoprawne uzycie: &7/level [nick_gracza]");
+        ChatUtils.sendMessage(sender, config.getCmdLevelUsage());
         return true;
     }
 
-    private void displayPlayerInfo(CommandSender sender, User user) {
+    private void displayPlayerInfo(CommandSender sender, User user, pl.tenfajnybartek.dropplugin.managers.ConfigManager config) {
         if (user == null || user.getPlayer() == null) {
-            ChatUtils.sendMessage(sender, "&4Blad: &cBrak danych gracza.");
+            ChatUtils.sendMessage(sender, config.getCmdLevelNoData());
             return;
         }
 
-        ChatUtils.sendMessage(sender, "&8&m-----------------&8[ &f&lPOZIOM GRACZA &8]&8&m-----------------");
+        ChatUtils.sendMessage(sender, config.getCmdLevelHeader());
         ChatUtils.sendMessage(sender, " ");
-        ChatUtils.sendMessage(sender, " &8* &7Nick: &e" + user.getPlayer().getName());
-        ChatUtils.sendMessage(sender, " &8* &7Aktualny poziom kopania: &a" + user.getLvl() + " &7, punkty: &6" + user.getPoints());
-        ChatUtils.sendMessage(sender, " &8* &7Do nastepnego poziomu brakuje: &c" + user.getPointsToNextLevel());
+        ChatUtils.sendMessage(sender, config.getCmdLevelNick().replace("{PLAYER}", user.getPlayer().getName()));
+        ChatUtils.sendMessage(sender, config.getCmdLevelLevelPoints()
+                .replace("{LEVEL}", String.valueOf(user.getLvl()))
+                .replace("{POINTS}", String.valueOf(user.getPoints())));
+        ChatUtils.sendMessage(sender, config.getCmdLevelPointsToNext()
+                .replace("{POINTS_TO_NEXT}", String.valueOf(user.getPointsToNextLevel())));
         ChatUtils.sendMessage(sender, " ");
-        ChatUtils.sendMessage(sender, "&8&m-----------------&8[ &f&lPOZIOM GRACZA &8]&8&m-----------------");
+        ChatUtils.sendMessage(sender, config.getCmdLevelFooter());
     }
 }

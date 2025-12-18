@@ -21,6 +21,46 @@ messages:
     message: "&eAdministrator: &6{ADMIN} &6wlaczyl {TYPE} &6na &e{TIME}"
     get: "&6Otrzymales: &e{TYPE} &6na: &e{TIME}"
   drop: "&7Wydropiles: &6{DROP} &7x&a{AMOUNT} &7(+{PKT} pkt, +{EXP} exp) "
+  commands:
+    drop:
+      no-permission: "&4Blad: &cNie masz uprawnien do tej komendy! &7(dropplugin.cmd.drop)"
+      only-players: "&4Blad: &cTa komenda moze byc uzywana tylko przez graczy."
+    adrop:
+      no-permission: "&4Blad: &cNie masz uprawnien do tej komendy! &7(dropplugin.cmd.adrop)"
+      usage:
+        - "&6Dostepne komendy dla adminow"
+        - "&6/adrop <drop/exp> <all> <time> &7- Nadaje turbo dla calego serwera."
+        - "&6/adrop <drop/exp> <player> <time> &7- Nadaje turbo dla jednego gracza."
+        - "&6/adrop reload - &7Przeladowywuje config"
+        - "&6/adrop level <nick_gracza> <poziom> <pkt> &7- Ustawia poziom gracza."
+        - "&7Standardowo 1 lvl - 0pkt, pamietaj x lvl * 500."
+      reloading: "&7Przeladowywanie..."
+      reloaded: "&eDrop &7przeladowano! ({TIME}s)"
+      reload-error: "&4Blad: &cNie udalo sie przeladowac konfiguracji."
+      invalid-time: "&4Blad: &cNiepoprawny czas: {TIME}"
+      turbo-enabled: "&aWlaczyles {TYPE} na: {TIME}"
+      turbo-enabled-for: "&aWlaczyles {TYPE} na: {TIME} dla: {PLAYER}"
+      player-offline: "&4Blad: &cGracz jest offline!"
+      player-data-error: "&4Blad: &cNie mozna zaladowac danych gracza!"
+      level-min-max: "&4Blad: &cPoziom musi byc miedzy {MIN} a {MAX}!"
+      level-not-number: "&4Blad: &cPodany poziom nie jest liczba!"
+      points-min-max: "&4Blad: &cPunkty musza byc miedzy {MIN} a {MAX}!"
+      points-not-number: "&4Blad: &cPodane punkty nie sa liczba!"
+      level-changed: "&aZmieniono poziom gracza &7{PLAYER} &az &7{OLD_LEVEL} &ana &7{NEW_LEVEL} &ai ustawiono punkty na &7{POINTS}"
+    level:
+      no-permission: "&4Blad: &cNie masz uprawnien do tej komendy! &7(dropplugin.cmd.level)"
+      no-alevel-permission: "&4Blad: &cNie masz uprawnien do sprawdzania innych graczy! &7(dropplugin.cmd.alevel)"
+      only-players: "&4Blad: &cTa komenda moze byc uzyta tylko przez graczy."
+      player-data-error: "&4Blad: &cNie mozna zaladowac Twoich danych!"
+      target-player-data-error: "&4Blad: &cNie mozna zaladowac danych podanego gracza!"
+      player-offline: "&4Blad: &cPodany gracz nie jest online!"
+      usage: "&cPoprawne uzycie: &7/level [nick_gracza]"
+      no-data: "&4Blad: &cBrak danych gracza."
+      header: "&8&m-----------------&8[ &f&lPOZIOM GRACZA &8]&8&m-----------------"
+      nick: " &8* &7Nick: &e{PLAYER}"
+      level-points: " &8* &7Aktualny poziom kopania: &a{LEVEL} &7, punkty: &6{POINTS}"
+      points-to-next: " &8* &7Do nastepnego poziomu brakuje: &c{POINTS_TO_NEXT}"
+      footer: "&8&m-----------------&8[ &f&lPOZIOM GRACZA &8]&8&m-----------------"
 settings:
   lvling:
     status: true
@@ -38,12 +78,13 @@ settings:
     status: true
     message: "&6TurboDrop dostepny jeszcze przez: &f{TIME}&6!"
   # Bonusy do szansy na drop z permisji (sprawdzane na żywo, działają bez restartu)
-  # Format: "permisja@wartość"
-  # Wartości > 1.0 = procenty (np. 5.0 = +5% szansy, 0.5 = +0.5% szansy)
-  # Wartości 0.0-1.0 = bezpośredni bonus (np. 0.05 = +0.05 szansy)
-  # Przykład: "drop.vip@5.0" daje +5% szansy graczom z permisją drop.vip
+  # Nowy format: klucz jest nazwą grupy, każda grupa ma swoją permisję i dodatek do szansy
+  # additionalchance: dodatkowa szansa w procentach (np. 0.5 = +0.5% szansy)
+  # Dla kompatybilności wstecznej, stary format "permisja@wartość" również działa
   chances:
-    - "dropplugin.vip@5.0"
+    vip:
+      permission: dropplugin.vip
+      additionalchance: 0.5
 gui:
   name: "&2&lDrop ze Stone"
   size: 36
