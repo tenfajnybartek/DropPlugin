@@ -24,6 +24,7 @@ public class ConfigManager {
     private final String guiStatusOn;
     private final String guiStatusOff;
     private final String guiItemName;
+    private final String guiLockedName;
     private final String guiCobbleName;
     private final String guiMessagesName;
     private final String guiTurboName;
@@ -41,7 +42,9 @@ public class ConfigManager {
     private final ItemBuilder enableItemAll;
     private final ItemBuilder disableItemAll;
     private final ItemBuilder fillerItem;
+    private final ItemBuilder lockedItem;
     private final List<String> guiItemLores;
+    private final List<String> guiLockedLores;
     private final List<String> guiCobbleLores;
     private final List<String> guiMessagesLores;
     private final List<String> guiTurboLores;
@@ -116,6 +119,8 @@ public class ConfigManager {
         this.guiStatusOff = getStringSafe(fc, "gui.status.disable", "OFF");
         this.guiItemName = getStringSafe(fc, "gui.item.name", "");
         this.guiItemLores = List.copyOf(getStringListSafe(fc, "gui.item.lores"));
+        this.guiLockedName = getStringSafe(fc, "gui.locked.name", "&c&lZABLOKOWANY DROP");
+        this.guiLockedLores = List.copyOf(getStringListSafe(fc, "gui.locked.lores"));
         this.guiCobbleName = getStringSafe(fc, "gui.cobble.name", "");
         this.cobbleStatus = getBooleanSafe(fc, "gui.cobble.status", true);
         this.guiCobbleLores = List.copyOf(getStringListSafe(fc, "gui.cobble.lores"));
@@ -155,6 +160,7 @@ public class ConfigManager {
         this.fillerItem = createItemBuilderSafe(fc.getString("gui.filler.item"), Material.GRAY_STAINED_GLASS_PANE);
         this.enableItemAll = createItemBuilderSafe(fc.getString("gui.enable-all.item"), Material.GREEN_CONCRETE);
         this.disableItemAll = createItemBuilderSafe(fc.getString("gui.disable-all.item"), Material.RED_CONCRETE);
+        this.lockedItem = createItemBuilderSafe(fc.getString("gui.locked.item"), Material.MAGMA_CREAM);
 
         this.chances = new HashMap<>();
         for (String s : fc.getStringList("settings.chances")) {
@@ -254,6 +260,7 @@ public class ConfigManager {
     public String getGuiStatusOn() { return this.guiStatusOn; }
     public String getGuiStatusOff() { return this.guiStatusOff; }
     public String getGuiItemName() { return this.guiItemName; }
+    public String getGuiLockedName() { return this.guiLockedName; }
     public String getGuiCobbleName() { return this.guiCobbleName; }
     public String getGuiMessagesName() { return this.guiMessagesName; }
     public String getGuiTurboName() { return this.guiTurboName; }
@@ -269,8 +276,10 @@ public class ConfigManager {
     public ItemBuilder getEnableItemAll() { return this.enableItemAll; }
     public ItemBuilder getDisableItemAll() { return this.disableItemAll; }
     public ItemBuilder getFillerItem() { return this.fillerItem; }
+    public ItemBuilder getLockedItem() { return this.lockedItem; }
     public Map<String, Chance> getChances() { return Collections.unmodifiableMap(this.chances); }
     public List<String> getGuiItemLores() { return this.guiItemLores; }
+    public List<String> getGuiLockedLores() { return this.guiLockedLores; }
     public List<String> getGuiCobbleLores() { return this.guiCobbleLores; }
     public List<String> getGuiMessagesLores() { return this.guiMessagesLores; }
     public List<String> getGuiTurboLores() { return this.guiTurboLores; }

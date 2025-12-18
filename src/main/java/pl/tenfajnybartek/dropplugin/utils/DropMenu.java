@@ -89,16 +89,15 @@ public class DropMenu {
             
             ItemBuilder item;
             if (isLocked) {
-                // Zablokowany drop - pokazuj jako MAGMA_CREAM
-                item = new ItemBuilder(org.bukkit.Material.MAGMA_CREAM)
-                        .setName("&c&lZABLOKOWANY DROP")
-                        .setLore(java.util.Arrays.asList(
-                                "&7Drop: &e" + drop.getName(),
-                                "&7Wymaga poziomu: &c" + drop.getNeededLevel(),
-                                "&7Twój poziom: &e" + playerLevel,
-                                "",
-                                "&cMusisz osiągnąć poziom " + drop.getNeededLevel() + " aby odblokować!"
-                        ));
+                // Zablokowany drop - konfigurowalny wygląd z config.yml
+                item = this.config.getLockedItem()
+                        .setName(this.config.getGuiLockedName())
+                        .setLore(this.config.getGuiLockedLores().stream()
+                                .map(entry -> entry
+                                        .replace("{DROP-NAME}", drop.getName())
+                                        .replace("{NEEDED-LEVEL}", String.valueOf(drop.getNeededLevel()))
+                                        .replace("{PLAYER-LEVEL}", String.valueOf(playerLevel)))
+                                .collect(Collectors.toList()));
             } else {
                 // Odblokowany drop - normalne wyświetlanie
                 item = new ItemBuilder(drop.getItemStack().getType())
