@@ -45,52 +45,49 @@ public final class Count {
         
         String trimmed = toParse.trim();
         try {
-            // Obsługa wartości ujemnych - sprawdź czy zaczyna się od minusa
-            if (trimmed.contains("-")) {
-                // Dla wartości ujemnych musimy być ostrożni przy split
-                // np. "-64-90" powinno dać [-64, 90], nie ["", "64", "90"]
-                int firstDash = trimmed.indexOf('-');
-                int lastDash = trimmed.lastIndexOf('-');
+            // Sprawdź czy zawiera separator '-'
+            if (!trimmed.contains("-")) {
+                // Brak minusa - pojedyncza wartość
+                int v = Integer.parseInt(trimmed);
+                return new Count(v, v);
+            }
+            
+            // Zawiera minus - może to być zakres lub wartość ujemna
+            int firstDash = trimmed.indexOf('-');
+            
+            // Jeśli minus jest na początku, to pierwszy element może być ujemny
+            if (firstDash == 0) {
+                // Szukamy drugiego minusa (separator zakresu)
+                int secondDash = trimmed.indexOf('-', 1);
                 
-                // Jeśli tylko jeden minus lub minus tylko na początku
-                if (firstDash == lastDash) {
-                    // Pojedyncza wartość (może być ujemna)
+                if (secondDash == -1) {
+                    // Tylko jeden minus na początku - pojedyncza wartość ujemna (np. "-5")
                     int v = Integer.parseInt(trimmed);
                     return new Count(v, v);
                 }
                 
-                // Dwa lub więcej minusów - szukamy separatora
-                // Jeśli zaczyna się minusem, to min jest ujemne
-                if (firstDash == 0) {
-                    // Format: "-X-Y" lub "-X--Y"
-                    int separatorIndex = trimmed.indexOf('-', 1);
-                    if (separatorIndex == -1) {
-                        // Tylko jeden minus na początku
-                        int v = Integer.parseInt(trimmed);
-                        return new Count(v, v);
-                    }
-                    String minStr = trimmed.substring(0, separatorIndex).trim();
-                    String maxStr = trimmed.substring(separatorIndex + 1).trim();
-                    int min = Integer.parseInt(minStr);
-                    int max = Integer.parseInt(maxStr);
-                    return new Count(min, max);
-                } else {
-                    // Format: "X-Y" (normalny)
-                    String[] split = trimmed.split("-", 2);
-                    if (split.length != 2) {
-                        return new Count(0, 1);
-                    }
-                    int min = Integer.parseInt(split[0].trim());
-                    int max = Integer.parseInt(split[1].trim());
-                    return new Count(min, max);
-                }
+                // Mamy zakres z ujemną wartością początkową (np. "-64-16" lub "-64--32")
+                String minStr = trimmed.substring(0, secondDash);
+                String maxStr = trimmed.substring(secondDash + 1);
+                
+                int min = Integer.parseInt(minStr);
+                int max = Integer.parseInt(maxStr);
+                return new Count(min, max);
             } else {
-                // Brak minusa - pojedyncza wartość dodatnia
-                int v = Integer.parseInt(trimmed);
-                return new Count(v, v);
+                // Minus nie jest na początku - zwykły zakres dodatnich liczb (np. "1-5")
+                // lub ujemna druga wartość (np. "10--5")
+                String[] parts = trimmed.split("-", 2);
+                if (parts.length != 2) {
+                    return new Count(0, 1);
+                }
+                
+                int min = Integer.parseInt(parts[0].trim());
+                int max = Integer.parseInt(parts[1].trim());
+                return new Count(min, max);
             }
         } catch (NumberFormatException ex) {
-            System.err.println("Nieprawidłowy format Count: " + toParse);
+            // Use warning instead of System.err to avoid Paper's nag message
+            java.util.logging.Logger.getLogger("DropPlugin").warning("Nieprawidłowy format Count: '" + toParse + "' - używam domyślnej wartości (0-1)");
             return new Count(0, 1);
         }
     }
