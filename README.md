@@ -48,14 +48,18 @@ Każdy drop posiada:
 
 - **Java**: 21+
 - **Serwer**: Paper 1.21.4+ (lub kompatybilny fork)
-- **Baza danych**: MySQL 5.7+ lub MariaDB 10.2+
+- **Baza danych**: 
+  - **SQLite** (domyślnie) - wbudowana, brak konfiguracji
+  - **MySQL** 5.7+ lub MariaDB 10.2+ (opcjonalnie)
 - **Opcjonalne**: PlaceholderAPI (dla integracji z innymi pluginami)
 
 ## 📥 Instalacja
 
 1. Pobierz plik `.jar` z releases lub zbuduj samodzielnie
 2. Umieść plik w folderze `plugins/` serwera
-3. Skonfiguruj połączenie z bazą danych w `config.yml`
+3. **(Opcjonalnie)** Skonfiguruj bazę danych w `config.yml`:
+   - Domyślnie używa SQLite (brak konfiguracji)
+   - Dla MySQL zmień `database.type: mysql` i skonfiguruj połączenie
 4. Zrestartuj serwer
 5. Plugin automatycznie utworzy wymagane tabele w bazie danych
 
@@ -149,31 +153,37 @@ GUI dostępne przez `/drop` zawiera:
 
 ## 🗄️ Baza danych
 
-Plugin wykorzystuje MySQL z pulą połączeń HikariCP.
+Plugin obsługuje **SQLite** (domyślnie) oraz **MySQL** z pulą połączeń HikariCP.
 
-### Tabela: drop_users
+### Wybór bazy danych
 
-```sql
-CREATE TABLE drop_users (
-  identifier VARCHAR(255) PRIMARY KEY,    -- UUID gracza
-  cobble BOOLEAN NOT NULL,                -- Czy zbiera cobble
-  messages BOOLEAN NOT NULL,              -- Czy pokazywać wiadomości
-  turboDrop BIGINT(22) NOT NULL,         -- Timestamp końca turbo drop
-  turboExp BIGINT(22) NOT NULL,          -- Timestamp końca turbo exp
-  lvl INT(11) NOT NULL,                  -- Poziom gracza
-  points INT(11) NOT NULL,               -- Punkty gracza
-  minedDrops TEXT NOT NULL,              -- Mapa wykopanych dropów
-  disabledDrops TEXT NOT NULL,           -- Lista wyłączonych dropów
-  lastMessage VARCHAR(255),              -- Ostatnia wiadomość (dla przyszłych funkcji)
-  lastSender VARCHAR(255)                -- Ostatni nadawca (dla przyszłych funkcji)
-);
-```
+**SQLite** (zalecane dla małych/średnich serwerów):
+- ✅ Brak konfiguracji - działa od razu
+- ✅ Brak wymagań zewnętrznych
+- ✅ Plik bazy w folderze pluginu (`database.db`)
+- ⚠️ Jedna aplikacja na raz
 
-### Konfiguracja puli połączeń
+**MySQL** (zalecane dla dużych serwerów):
+- ✅ Lepsza wydajność przy wielu graczach
+- ✅ Możliwość współdzielenia między serwerami
+- ✅ Zaawansowane narzędzia backupu
+- ⚠️ Wymaga serwera MySQL/MariaDB
+
+### Konfiguracja
 
 ```yaml
 database:
-  maxPool: 10                      # Rekomendowane: 5-10 dla małych serwerów
+  type: sqlite              # 'sqlite' lub 'mysql'
+  
+  # Dla MySQL (ignorowane gdy type: sqlite):
+  host: localhost
+  port: 3306
+  user: root
+  base: minecraft
+  password: haslo
+  
+  # Ustawienia puli HikariCP:
+  maxPool: 10               # Tylko dla MySQL (SQLite = 1)
   connectionTimeoutMs: 30000       # 30 sekund
   idleTimeoutMs: 600000            # 10 minut
   leakDetectionThresholdMs: 0      # Wyłączone (włącz >0 dla debugowania)

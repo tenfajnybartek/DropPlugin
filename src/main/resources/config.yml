@@ -1,9 +1,16 @@
 database:
+  # Typ bazy danych: 'sqlite' lub 'mysql'
+  # SQLite: Prostsza, nie wymaga zewnętrznego serwera, idealna dla małych serwerów
+  # MySQL: Lepsza wydajność dla dużych serwerów, wymaga konfiguracji serwera MySQL
+  type: sqlite                     # Domyślnie SQLite (mysql lub sqlite)
+  
+  # Ustawienia dla MySQL (ignorowane gdy type: sqlite)
   host: localhost
   port: 3306
   user: user
   base: database
   password: password
+  
   # Ustawienia puli połączeń HikariCP
   maxPool: 10                      # Maksymalna liczba połączeń w puli (zalecane: 5-10)
   connectionTimeoutMs: 30000       # Timeout połączenia w ms (30 sekund)
