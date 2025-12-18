@@ -13,19 +13,29 @@ public class UserManager {
     private final Map<UUID, User> userMap = new ConcurrentHashMap<>();
 
     public User getUser(Player player) {
-        if (player == null) return null;
+        if (player == null) {
+            Bukkit.getLogger().warning("Attempted to get User for null player");
+            return null;
+        }
+        
         UUID id = player.getUniqueId();
-
         User cached = this.userMap.get(id);
         if (cached != null) return cached;
 
         if (!Bukkit.isPrimaryThread()) {
+            Bukkit.getLogger().warning("Attempted to create User for " + player.getName() + " from async thread");
             return null;
         }
 
-        User created = new User(player);
-        User prev = this.userMap.putIfAbsent(id, created);
-        return prev != null ? prev : created;
+        try {
+            User created = new User(player);
+            User prev = this.userMap.putIfAbsent(id, created);
+            return prev != null ? prev : created;
+        } catch (Exception e) {
+            Bukkit.getLogger().severe("Failed to create User for player " + player.getName() + ": " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

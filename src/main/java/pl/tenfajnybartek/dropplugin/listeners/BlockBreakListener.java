@@ -18,6 +18,12 @@ public class BlockBreakListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onBreak(BlockBreakEvent event) {
-        this.dropManager.breakBlock(event);
+        try {
+            this.dropManager.breakBlock(event);
+        } catch (Exception e) {
+            // Log error but don't crash the plugin
+            event.getPlayer().sendMessage("§cWystąpił błąd podczas przetwarzania dropu. Skontaktuj się z administratorem.");
+            e.printStackTrace();
+        }
     }
 }

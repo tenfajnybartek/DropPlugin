@@ -113,7 +113,7 @@ public class DropMenu {
             if (slot >= 0 && slot < size) inventory.setItem(slot, enableAll);
         }
 
-        if (this.config.isDiableAllStatus()) {
+        if (this.config.isDisableAllStatus()) {
             int slot = this.config.getDisableAllSlot();
             if (slot >= 0 && slot < size) inventory.setItem(slot, disableAll);
         }

@@ -83,14 +83,25 @@ public class Database {
             }
 
             // Ładowanie użytkowników z bazy
+            int loadedUsers = 0;
             try (Connection conn = ds.getConnection();
                  PreparedStatement ps = conn.prepareStatement("SELECT * FROM drop_users");
                  ResultSet resultSet = ps.executeQuery()) {
+                
+                while (resultSet.next()) {
+                    try {
+                        User user = new User(resultSet);
+                        plugin.getUserManager().getUserMap().put(user.getIdentifier(), user);
+                        loadedUsers++;
+                    } catch (Exception e) {
+                        this.logger.warning("Nie można załadować użytkownika: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+                this.logger.info("Załadowano " + loadedUsers + " graczy z bazy danych!");
             } catch (SQLException e) {
                 this.logger.warning("Nie można załadować graczy z bazy danych!");
                 e.printStackTrace();
-            } finally {
-                this.logger.info("Załadowano " + plugin.getUserManager().getUserMap().size() + " graczy!");
             }
         });
     }
@@ -104,6 +115,11 @@ public class Database {
     }
 
     public void saveUser(User user, boolean sync) {
+        if (user == null) {
+            logger.warning("Próba zapisania null użytkownika!");
+            return;
+        }
+        
         if (ds == null) {
             logger.warning("DataSource nie jest zainicjalizowany, pomijam saveUser dla " + user.getIdentifier());
             return;
@@ -124,9 +140,12 @@ public class Database {
                 preparedStatement.setString(8, MapUtils.serializeMap(user.getMinedDrops()));
                 preparedStatement.setString(9, MapUtils.serializeList(user.getDisabledDrops()));
 
-                preparedStatement.executeUpdate();
+                int affectedRows = preparedStatement.executeUpdate();
+                if (affectedRows > 0) {
+                    logger.fine("Zapisano użytkownika " + user.getIdentifier() + " (poziom: " + user.getLvl() + ", punkty: " + user.getPoints() + ")");
+                }
             } catch (SQLException e) {
-                this.logger.warning("Nie można zapisać gracza do bazy danych!");
+                this.logger.warning("Nie można zapisać gracza " + user.getIdentifier() + " do bazy danych!");
                 e.printStackTrace();
             }
         };

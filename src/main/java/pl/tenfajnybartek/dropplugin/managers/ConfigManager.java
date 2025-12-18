@@ -70,7 +70,7 @@ public class ConfigManager {
     private final boolean turboStatus;
     private final boolean levelStatus;
     private final boolean enableAllStatus;
-    private final boolean diableAllStatus;
+    private final boolean disableAllStatus;
     private final boolean fillerStatus;
     private final boolean lvlStatus;
     private final boolean actionbarStatus;
@@ -131,7 +131,7 @@ public class ConfigManager {
         this.enableAllStatus = getBooleanSafe(fc, "gui.enable-all.status", true);
         this.disableAllName = getStringSafe(fc, "gui.disable-all.name", "");
         this.disableAllLores = List.copyOf(getStringListSafe(fc, "gui.disable-all.lores"));
-        this.diableAllStatus = getBooleanSafe(fc, "gui.disable-all.status", true);
+        this.disableAllStatus = getBooleanSafe(fc, "gui.disable-all.status", true);
         this.cobbleSlot = getIntSafe(fc, "gui.cobble.slot", 10);
         this.messagesSlot = getIntSafe(fc, "gui.messages.slot", 11);
         this.turboSlot = getIntSafe(fc, "gui.turbos.slot", 12);
@@ -290,7 +290,7 @@ public class ConfigManager {
     public boolean isTurboStatus() { return this.turboStatus; }
     public boolean isLevelStatus() { return this.levelStatus; }
     public boolean isEnableAllStatus() { return this.enableAllStatus; }
-    public boolean isDiableAllStatus() { return this.diableAllStatus; }
+    public boolean isDisableAllStatus() { return this.disableAllStatus; }
     public boolean isFillerStatus() { return this.fillerStatus; }
     public boolean isLvlStatus() { return this.lvlStatus; }
     public boolean isActionbarStatus() { return this.actionbarStatus; }

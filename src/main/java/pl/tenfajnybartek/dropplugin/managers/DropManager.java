@@ -68,11 +68,14 @@ public class DropManager {
     }
 
     public void breakBlock(BlockBreakEvent event) {
-        if (event.isCancelled()) return;
-        if (event.getPlayer().getGameMode() != GameMode.SURVIVAL) return;
+        if (event == null || event.isCancelled()) return;
+        if (event.getPlayer() == null || event.getPlayer().getGameMode() != GameMode.SURVIVAL) return;
 
         User user = this.userManager.getUser(event.getPlayer());
-        if (user == null) return;
+        if (user == null) {
+            // User not loaded yet, skip drop processing
+            return;
+        }
 
         Block block = event.getBlock();
         Material originalMaterial = block.getType();
@@ -110,9 +113,13 @@ public class DropManager {
                 ItemUtils.giveItem(user.getPlayer(), item);
             }
 
-            double playerY = event.getPlayer().getLocation().getY();
+            double playerY = 0;
+            if (event.getPlayer().getLocation() != null) {
+                playerY = event.getPlayer().getLocation().getY();
+            }
+            
             for (Drop drop : this.dropList) {
-                if (user.isDisabled(drop)) continue;
+                if (drop == null || user.isDisabled(drop)) continue;
                 Count h = drop.getHeight();
                 if (h != null) {
                     if (playerY > h.getMax() || playerY < h.getMin()) continue;

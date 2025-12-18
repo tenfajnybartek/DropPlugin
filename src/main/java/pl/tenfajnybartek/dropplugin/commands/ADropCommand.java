@@ -138,6 +138,10 @@ public class ADropCommand implements CommandExecutor {
 
                 try {
                     newLevel = Integer.parseInt(args[2]);
+                    if (newLevel < 1 || newLevel > 1000) {
+                        ChatUtils.sendMessage(sender, "&4Blad: &cPoziom musi byc miedzy 1 a 1000!");
+                        return true;
+                    }
                 } catch (NumberFormatException e) {
                     ChatUtils.sendMessage(sender, "&4Blad: &cPodany poziom nie jest liczba!");
                     return true;
@@ -146,6 +150,10 @@ public class ADropCommand implements CommandExecutor {
                 if (args.length >= 4) {
                     try {
                         newPoints = Integer.parseInt(args[3]);
+                        if (newPoints < 0 || newPoints > 1000000) {
+                            ChatUtils.sendMessage(sender, "&4Blad: &cPunkty musza byc miedzy 0 a 1000000!");
+                            return true;
+                        }
                     } catch (NumberFormatException e) {
                         ChatUtils.sendMessage(sender, "&4Blad: &cPodane punkty nie sa liczba!");
                         return true;

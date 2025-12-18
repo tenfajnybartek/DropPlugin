@@ -4,6 +4,11 @@ database:
   user: user
   base: database
   password: password
+  # Ustawienia puli połączeń HikariCP
+  maxPool: 10                      # Maksymalna liczba połączeń w puli (zalecane: 5-10)
+  connectionTimeoutMs: 30000       # Timeout połączenia w ms (30 sekund)
+  idleTimeoutMs: 600000            # Timeout bezczynności w ms (10 minut)
+  leakDetectionThresholdMs: 0      # Wykrywanie wycieków połączeń (0 = wyłączone)
 messages:
   turbo:
     message: "&eAdministrator: &6{ADMIN} &6wlaczyl {TYPE} &6na &e{TIME}"

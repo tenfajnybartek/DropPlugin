@@ -25,6 +25,11 @@ public class User {
     private int points;
     private int lvl;
 
+    /**
+     * Tworzy nowego użytkownika z domyślnymi wartościami.
+     * 
+     * @param player Gracz, dla którego tworzony jest obiekt User
+     */
     public User(Player player) {
         this.identifier = player.getUniqueId();
         this.cobble = true;
@@ -37,6 +42,12 @@ public class User {
         this.points = 0;
     }
 
+    /**
+     * Wczytuje użytkownika z wyniku zapytania SQL.
+     * 
+     * @param resultSet ResultSet zawierający dane użytkownika z bazy danych
+     * @throws SQLException jeśli wystąpi błąd podczas odczytu danych z ResultSet
+     */
     public User(ResultSet resultSet) throws SQLException {
         this.identifier = UUID.fromString(resultSet.getString("identifier"));
         this.cobble = resultSet.getBoolean("cobble");
@@ -82,14 +93,29 @@ public class User {
         return this.lvl;
     }
 
+    /**
+     * Zwraca liczbę punktów wymaganą do osiągnięcia następnego poziomu.
+     * 
+     * @return liczba punktów wymagana do awansu
+     */
     public int getPointsRequired() {
-        return this.lvl * ConfigManager.getConfigManager().getPointsToLvlUp();
+        int pointsToLvl = ConfigManager.getConfigManager().getPointsToLvlUp();
+        if (pointsToLvl <= 0) {
+            return 100; // domyślna wartość bezpieczna
+        }
+        return this.lvl * pointsToLvl;
     }
 
     public int getPoints() {
         return this.points;
     }
 
+    /**
+     * Dodaje punkty użytkownikowi i wywołuje event zmiany punktów.
+     * Punkty są dodawane tylko jeśli system levelingu jest włączony w konfiguracji.
+     * 
+     * @param points liczba punktów do dodania
+     */
     public void addPoints(int points) {
         if (ConfigManager.getConfigManager().isLvlStatus()) {
             this.points += points;

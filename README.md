@@ -1,6 +1,6 @@
 # DropPlugin
 
-Plugin dla serwerów Minecraft (Paper 1.21.8+) wprowadzający zaawansowany system customowego dropu ze stone oraz system poziomów dla graczy.
+Plugin dla serwerów Minecraft (Paper 1.21.4+) wprowadzający zaawansowany system customowego dropu ze stone oraz system poziomów dla graczy.
 
 
 ## 📖 Opis
@@ -43,7 +43,7 @@ Każdy drop posiada:
 ## 🔧 Wymagania
 
 - **Java**: 21+
-- **Serwer**: Paper 1.21.8+ (lub kompatybilny fork)
+- **Serwer**: Paper 1.21.4+ (lub kompatybilny fork)
 - **Baza danych**: MySQL 5.7+ lub MariaDB 10.2+
 
 ## 📥 Instalacja
@@ -217,5 +217,5 @@ Projekt jest własnością autora. Wszelkie prawa zastrzeżone.
 
 **Autor**: tenfajnybartek  
 **Wersja**: 1.0.0-SNAPSHOT  
-**Minecraft**: 1.21.8 (Paper)  
+**Minecraft**: 1.21.4 (Paper)  
 **Java**: 21+
