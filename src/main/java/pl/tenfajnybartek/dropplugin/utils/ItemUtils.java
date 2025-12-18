@@ -1,6 +1,5 @@
 package pl.tenfajnybartek.dropplugin.utils;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -46,20 +45,33 @@ public final class ItemUtils {
         int maxDurability = item.getType().getMaxDurability();
         if (maxDurability <= 0) return;
 
+        // Unbreaking ma szansę na uniknięcie uszkodzenia
         int enchantLevel = item.getEnchantmentLevel(Enchantment.UNBREAKING);
-        if (enchantLevel > 0 && 100 / (enchantLevel + 1) > RandomUtils.getRandInt(0, 100)) {
-            if (currentDamage >= maxDurability) {
-                player.getInventory().clear(player.getInventory().getHeldItemSlot());
-                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
-            } else {
-                damageableMeta.setDamage(currentDamage + 1);
-                item.setItemMeta(damageableMeta);
+        boolean shouldDamage = true;
+        
+        if (enchantLevel > 0) {
+            // Szansa na uniknięcie uszkodzenia: 100/(level+1) %
+            int chance = 100 / (enchantLevel + 1);
+            if (RandomUtils.getRandInt(0, 100) < chance) {
+                shouldDamage = false;
             }
-        } else if (currentDamage >= maxDurability) {
+        }
+        
+        if (!shouldDamage) {
+            return; // Unbreaking uratował narzędzie
+        }
+
+        // Zwiększ uszkodzenie
+        int newDamage = currentDamage + 1;
+        
+        // Sprawdź czy narzędzie się zepsuło
+        if (newDamage >= maxDurability) {
             player.getInventory().clear(player.getInventory().getHeldItemSlot());
-            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
+            if (player.getLocation() != null) {
+                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
+            }
         } else {
-            damageableMeta.setDamage(currentDamage + 1);
+            damageableMeta.setDamage(newDamage);
             item.setItemMeta(damageableMeta);
         }
     }

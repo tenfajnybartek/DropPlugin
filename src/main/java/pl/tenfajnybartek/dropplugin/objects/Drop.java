@@ -4,6 +4,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
+/**
+ * Reprezentuje pojedynczy drop, który może wypaść ze stone.
+ * Zawiera informacje o itemie, szansie, wysokości, ilości punktów i doświadczenia.
+ */
 public final class Drop {
     private final ItemStack itemStack;
     private final boolean fortune;
@@ -14,6 +18,19 @@ public final class Drop {
     private final Count points;
     private final int exp;
 
+    /**
+     * Tworzy nowy obiekt Drop.
+     * 
+     * @param name Nazwa dropu (wyświetlana graczom)
+     * @param fortune Czy enchant Fortune zwiększa szansę na ten drop
+     * @param itemStack ItemStack który ma wypaść
+     * @param chance Szansa na drop (0.0-1.0 lub 0-100)
+     * @param height Zakres wysokości Y gdzie drop jest dostępny
+     * @param amount Zakres ilości itemów które mogą wypaść
+     * @param points Zakres punktów doświadczenia za wykopanie
+     * @param exp Ilość Minecraft XP za wykopanie
+     * @throws IllegalArgumentException jeśli name lub itemStack są null/puste
+     */
     public Drop(String name,
                 boolean fortune,
                 ItemStack itemStack,
@@ -32,7 +49,7 @@ public final class Drop {
         this.height = height;
         this.amount = amount;
         this.points = points;
-        this.exp = exp;
+        this.exp = Math.max(0, exp); // exp nie może być ujemne
     }
 
     private static double normalizeChance(double c) {

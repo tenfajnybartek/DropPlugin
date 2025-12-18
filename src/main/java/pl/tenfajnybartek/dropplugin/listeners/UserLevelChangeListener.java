@@ -20,28 +20,33 @@ public class UserLevelChangeListener implements Listener {
     @EventHandler
     public void userLevelChange(UserLevelChangeEvent event) {
         Player player = event.getPlayer();
+        if (player == null) return;
+        
         int lvl = event.getLevel();
+        
+        // Sprawdź czy to maksymalny poziom
         if (lvl == this.config.getMaxLevel()) {
             String msgAll = this.config.getMaxLevelMessage()
                     .replace("{PLAYER}", player.getName())
                     .replace("{LVL}", String.valueOf(lvl));
             Bukkit.getOnlinePlayers().forEach(all -> ChatUtils.sendMessage(all, msgAll));
-
-            String msgPlayer = this.config.getLvlUpMessage()
-                    .replace("{PLAYER}", player.getName())
-                    .replace("{LVL}", String.valueOf(lvl));
-            ChatUtils.sendMessage(player, msgPlayer);
         } else if (this.config.getChatLevels().contains(lvl)) {
+            // Jeśli to poziom ogłaszany na chacie (np. 5, 10, 15...)
             String msgAll = this.config.getLevelMessage()
                     .replace("{PLAYER}", player.getName())
                     .replace("{LVL}", String.valueOf(lvl));
             Bukkit.getOnlinePlayers().forEach(all -> ChatUtils.sendMessage(all, msgAll));
         }
 
+        // Wiadomość osobista dla gracza o awansie
         String personal = this.config.getLvlUpMessage()
                 .replace("{LVL}", String.valueOf(lvl))
                 .replace("{POINTS}", String.valueOf(lvl * this.config.getPointsToLvlUp()));
         ChatUtils.sendMessage(player, personal);
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2.0f, 2.0f);
+        
+        // Dźwięk awansu
+        if (player.getLocation() != null && player.getWorld() != null) {
+            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2.0f, 2.0f);
+        }
     }
 }
