@@ -14,6 +14,7 @@ DropPlugin to kompleksowy plugin do zarządzania dropem z kamienia (stone, grani
 - **Baza danych** - MySQL/MariaDB z wykorzystaniem HikariCP
 - **ActionBar** - informacje o aktywnych eventach
 - **Fortune support** - współpraca z enchantami
+- **PlaceholderAPI** - integracja z innymi pluginami przez placeholdery
 
 ## ✨ Funkcje
 
@@ -29,22 +30,26 @@ DropPlugin to kompleksowy plugin do zarządzania dropem z kamienia (stone, grani
 - **Szanse z permisji** - dodatkowe bonusy dla graczy z określonymi uprawnieniami
 - **ActionBar** - wyświetlanie czasu trwania eventów
 - **Automatyczny zapis** - okresowe zapisywanie danych graczy
+- **PlaceholderAPI** - integracja do używania w innych pluginach
 
 ### System dropu
 
 Każdy drop posiada:
 - Nazwę i typ itemu
 - Szansę na wypadnięcie (z bonusem od fortune i permisji)
-- Zakres wysokości spawnu (Y-level)
+- Zakres wysokości spawnu (Y-level od -64 do 320)
 - Ilość punktów i doświadczenia
 - Zakres ilości itemów
 - Support dla fortune enchant
+
+**UWAGA**: Od Minecraft 1.18+ wspierane są wartości ujemne dla wysokości (od -64 do 320)
 
 ## 🔧 Wymagania
 
 - **Java**: 21+
 - **Serwer**: Paper 1.21.4+ (lub kompatybilny fork)
 - **Baza danych**: MySQL 5.7+ lub MariaDB 10.2+
+- **Opcjonalne**: PlaceholderAPI (dla integracji z innymi pluginami)
 
 ## 📥 Instalacja
 
@@ -180,6 +185,36 @@ database:
 - Dodatkowo przy wyjściu gracza z serwera
 - Przy wyłączaniu pluginu
 
+## 🔌 Integracja z PlaceholderAPI
+
+Plugin oferuje integrację z PlaceholderAPI, umożliwiającą wykorzystanie danych gracza w innych pluginach.
+
+### Dostępne placeholdery
+
+| Placeholder | Opis | Przykład |
+|-------------|------|----------|
+| `%dropplugin_level%` | Poziom kopania gracza | `15` |
+| `%dropplugin_points%` | Aktualne punkty gracza | `750` |
+| `%dropplugin_points_required%` | Punkty wymagane do następnego poziomu | `1500` |
+| `%dropplugin_points_to_next%` | Punkty brakujące do awansu | `750` |
+
+### Przykłady użycia
+
+**W innych pluginach** (np. DeluxeMenus, FeatherBoard):
+```yaml
+# Wyświetlanie poziomu w menu
+display_name: '&aPoziom kopania: &e%dropplugin_level%'
+
+# Wyświetlanie postępu
+lore:
+  - '&7Punkty: &e%dropplugin_points%&7/&e%dropplugin_points_required%'
+  - '&7Do awansu: &e%dropplugin_points_to_next% pkt'
+```
+
+**Instalacja**:
+1. Zainstaluj PlaceholderAPI na serwerze
+2. Uruchom serwer - DropPlugin automatycznie wykryje PlaceholderAPI
+3. Użyj placeholderów w innych pluginach
 
 ## 🐛 Znane problemy i rozwiązania
 

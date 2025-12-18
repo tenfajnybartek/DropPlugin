@@ -33,8 +33,9 @@ public final class Count {
 
     /**
      * Parsuje string w formacie "min-max" lub pojedynczą wartość do obiektu Count.
+     * Obsługuje wartości ujemne (np. dla wysokości Y od -64 do 320 w Minecraft 1.18+).
      * 
-     * @param toParse String do sparsowania (np. "1-5" lub "3")
+     * @param toParse String do sparsowania (np. "1-5", "3", "-64-90")
      * @return Obiekt Count, lub Count(0, 1) w przypadku błędu
      */
     public static Count parse(String toParse) {
@@ -44,20 +45,48 @@ public final class Count {
         
         String trimmed = toParse.trim();
         try {
+            // Obsługa wartości ujemnych - sprawdź czy zaczyna się od minusa
             if (trimmed.contains("-")) {
-                String[] split = trimmed.split("-", 2);
-                if (split.length != 2) {
-                    return new Count(0, 1);
+                // Dla wartości ujemnych musimy być ostrożni przy split
+                // np. "-64-90" powinno dać [-64, 90], nie ["", "64", "90"]
+                int firstDash = trimmed.indexOf('-');
+                int lastDash = trimmed.lastIndexOf('-');
+                
+                // Jeśli tylko jeden minus lub minus tylko na początku
+                if (firstDash == lastDash) {
+                    // Pojedyncza wartość (może być ujemna)
+                    int v = Integer.parseInt(trimmed);
+                    return new Count(v, v);
                 }
-                int min = Integer.parseInt(split[0].trim());
-                int max = Integer.parseInt(split[1].trim());
-                // Zabezpieczenie przed nieprawidłowymi wartościami
-                if (min < 0) min = 0;
-                if (max < 0) max = 0;
-                return new Count(min, max);
+                
+                // Dwa lub więcej minusów - szukamy separatora
+                // Jeśli zaczyna się minusem, to min jest ujemne
+                if (firstDash == 0) {
+                    // Format: "-X-Y" lub "-X--Y"
+                    int separatorIndex = trimmed.indexOf('-', 1);
+                    if (separatorIndex == -1) {
+                        // Tylko jeden minus na początku
+                        int v = Integer.parseInt(trimmed);
+                        return new Count(v, v);
+                    }
+                    String minStr = trimmed.substring(0, separatorIndex).trim();
+                    String maxStr = trimmed.substring(separatorIndex + 1).trim();
+                    int min = Integer.parseInt(minStr);
+                    int max = Integer.parseInt(maxStr);
+                    return new Count(min, max);
+                } else {
+                    // Format: "X-Y" (normalny)
+                    String[] split = trimmed.split("-", 2);
+                    if (split.length != 2) {
+                        return new Count(0, 1);
+                    }
+                    int min = Integer.parseInt(split[0].trim());
+                    int max = Integer.parseInt(split[1].trim());
+                    return new Count(min, max);
+                }
             } else {
+                // Brak minusa - pojedyncza wartość dodatnia
                 int v = Integer.parseInt(trimmed);
-                if (v < 0) v = 0;
                 return new Count(v, v);
             }
         } catch (NumberFormatException ex) {

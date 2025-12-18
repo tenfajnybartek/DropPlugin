@@ -1,5 +1,39 @@
 # Changelog - DropPlugin
 
+## [PlaceholderAPI & Negative Y Support] - 2025-12-18
+
+### ✨ Nowe Funkcje
+
+1. **Wsparcie dla ujemnych wartości Y (-64 do 320)**
+   - Obsługa nowych limitów wysokości z Minecraft 1.18+
+   - Zaktualizowana metoda `Count.parse()` do obsługi wartości ujemnych
+   - Przykłady w `drops.yml` dla głębokich warstw (np. `-64-16` dla diamentów)
+   - Format: `-64-90` lub `-64--32` dla zakresów z ujemnymi wartościami
+
+2. **Integracja z PlaceholderAPI**
+   - Dodano ekspansję PlaceholderAPI
+   - Dostępne placeholdery:
+     - `%dropplugin_level%` - poziom kopania gracza
+     - `%dropplugin_points%` - aktualne punkty gracza
+     - `%dropplugin_points_required%` - punkty wymagane do następnego poziomu
+     - `%dropplugin_points_to_next%` - punkty brakujące do awansu
+   - Automatyczna detekcja PlaceholderAPI przy starcie
+   - Soft dependency w `plugin.yml`
+
+### 📝 Aktualizacje Dokumentacji
+
+- Zaktualizowano `README.md` z sekcją PlaceholderAPI
+- Dodano przykłady użycia placeholderów
+- Zaktualizowano opis wysokości w `drops.yml`
+- Dodano informacje o wspieranych zakresach Y
+
+### 🔧 Zmiany Techniczne
+
+- Dodano zależność `me.clip:placeholderapi:2.11.6` (compileOnly)
+- Dodano pakiet `integrations` z klasą `DropPluginExpansion`
+- Zmieniono logikę parsowania w `Count.parse()` dla ujemnych liczb
+- Dodano metodę `registerPlaceholderAPI()` w `DropPlugin`
+
 ## [Code Review & Improvements] - 2025-12-18
 
 ### 🔴 Krytyczne Poprawki

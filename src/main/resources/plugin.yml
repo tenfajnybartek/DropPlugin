@@ -4,6 +4,7 @@ main: pl.tenfajnybartek.dropplugin.base.DropPlugin
 api-version: '1.21'
 authors: [tenfajnybartek]
 description: Plugin na drop ze stone
+softdepend: [PlaceholderAPI]
 commands:
   drop:
     aliases: [ "stone", "kamien" ]

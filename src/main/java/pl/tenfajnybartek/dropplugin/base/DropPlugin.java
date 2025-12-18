@@ -61,6 +61,9 @@ public class DropPlugin extends JavaPlugin {
             // Rejestracja listenerów i komend
             registerListeners();
             registerCommands();
+            
+            // Rejestracja PlaceholderAPI expansion (jeśli PlaceholderAPI jest dostępne)
+            registerPlaceholderAPI();
 
             this.logger.info("Zaladowano plugin tfbDrop w " + (double)(System.currentTimeMillis() - startTime) / 1000.0 + "s");
         } catch (Throwable t) {
@@ -127,6 +130,20 @@ public class DropPlugin extends JavaPlugin {
         new DropCommand(this);
         new ADropCommand(this);
         new LevelCommand(this);
+    }
+    
+    private void registerPlaceholderAPI() {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            try {
+                new pl.tenfajnybartek.dropplugin.integrations.DropPluginExpansion(this).register();
+                this.logger.info("Zarejestrowano PlaceholderAPI expansion!");
+                this.logger.info("Dostępne placeholdery: %dropplugin_level%, %dropplugin_points%, %dropplugin_points_required%, %dropplugin_points_to_next%");
+            } catch (Exception e) {
+                this.logger.warning("Nie udało się zarejestrować PlaceholderAPI expansion: " + e.getMessage());
+            }
+        } else {
+            this.logger.info("PlaceholderAPI nie znalezione - placeholdery nie będą dostępne.");
+        }
     }
 
     // Gettery
