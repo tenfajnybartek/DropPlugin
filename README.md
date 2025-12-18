@@ -70,7 +70,7 @@ Każdy drop posiada:
 | Komenda | Aliasy | Opis | Uprawnienie |
 |---------|--------|------|-------------|
 | `/drop` | `/stone`, `/kamien` | Otwiera GUI dropu | `dropplugin.cmd.drop` |
-| `/level [gracz]` | `/poziom`, `/lvl` | Pokazuje poziom | `tfbhc.cmd.level` / `tfbhc.cmd.alevel` (dla innych) |
+| `/level [gracz]` | `/poziom`, `/lvl` | Pokazuje poziom | `dropplugin.cmd.level` / `dropplugin.cmd.alevel` (dla innych) |
 
 ### Komendy administratorskie
 
