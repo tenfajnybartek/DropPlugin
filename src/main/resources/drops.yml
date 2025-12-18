@@ -20,110 +20,104 @@
 #              W GUI zablokowane dropy pokazują się jako MAGMA_CREAM z informacją o wymaganym poziomie
 
 drops:
-  # === TIER 1: Podstawowe rudy (poziom 1+) ===
   coal:
     name: "Wegiel"
     item: "material:coal"
-    chance: 15.0          # 15% szansa
-    amount: 1-3           # 1-3 sztuki
-    height: -64-320       # Cała wysokość
-    points: 1-3           # 1-3 punkty
-    exp: 2                # 2 exp
-    fortune: true         # Fortune zwiększa ilość
-    neededlvl: 1          # Od poziomu 1
-
-  raw_copper:
-    name: "Surowa Miedz"
-    item: "material:raw_copper"
-    chance: 12.0          # 12% szansa
-    amount: 2-5           # 2-5 sztuk (copper wypada w większych ilościach)
-    height: -64-112       # Copper generuje się niżej
-    points: 2-4           # 2-4 punkty
-    exp: 3                # 3 exp
+    chance: 1.2
+    amount: 1-3
+    height: -64-320
+    points: 1-3
+    exp: 2
     fortune: true
     neededlvl: 1
 
-  # === TIER 2: Średnio rzadkie rudy (poziom 5+) ===
-  raw_iron:
-    name: "Surowe Zelazo"
-    item: "material:raw_iron"
-    chance: 8.0           # 8% szansa
-    amount: 1-2           # 1-2 sztuki
-    height: -64-72        # Głównie w niższych warstwach
-    points: 3-6           # 3-6 punktów
-    exp: 4                # 4 exp
+  raw_copper:
+    name: "Miedz"
+    item: "material:raw_copper"
+    chance: 1.0
+    amount: 2-5
+    height: -64-112
+    points: 2-4
+    exp: 3
     fortune: true
-    neededlvl: 5          # Od poziomu 5
+    neededlvl: 1
+
+  raw_iron:
+    name: "Zelazo"
+    item: "material:raw_iron"
+    chance: 0.8
+    amount: 1-2
+    height: -64-72
+    points: 3-6
+    exp: 4
+    fortune: true
+    neededlvl: 5
 
   lapis_lazuli:
     name: "Lapis Lazuli"
     item: "material:lapis_lazuli"
-    chance: 6.0           # 6% szansa
-    amount: 4-9           # 4-9 sztuk (lapis wypada w większych ilościach)
-    height: -64-64        # Głównie głęboko
-    points: 3-7           # 3-7 punktów
-    exp: 5                # 5 exp
+    chance: 1.0
+    amount: 4-9
+    height: -64-64
+    points: 3-7
+    exp: 5
     fortune: true
     neededlvl: 5
 
   redstone:
     name: "Redstone"
     item: "material:redstone"
-    chance: 5.0           # 5% szansa
-    amount: 4-8           # 4-8 sztuk (redstone wypada w większych ilościach)
-    height: -64-16        # Bardzo głęboko
-    points: 4-8           # 4-8 punktów
-    exp: 6                # 6 exp
-    fortune: true         # Fortune znacznie zwiększa ilość
+    chance: 0.9
+    amount: 4-8
+    height: -64-16
+    points: 4-8
+    exp: 6
+    fortune: true
     neededlvl: 8
 
-  # === TIER 3: Rzadkie rudy (poziom 10+) ===
   raw_gold:
-    name: "Surowe Zloto"
+    name: "Zloto"
     item: "material:raw_gold"
-    chance: 3.0           # 3% szansa
-    amount: 1-2           # 1-2 sztuki
-    height: -64-32        # Wypada w niższych warstwach
-    points: 5-9           # 5-9 punktów
-    exp: 7                # 7 exp
+    chance: 0.4
+    amount: 1-2
+    height: -64-32
+    points: 5-9
+    exp: 7
     fortune: true
     neededlvl: 10
 
   diamond:
     name: "Diament"
     item: "material:diamond"
-    chance: 2.0           # 2% szansa
-    amount: 1-2           # 1-2 sztuki
-    height: -64-16        # Działa w głębokich warstwach (Y: -64 do 16)
-    points: 8-15          # 8-15 punktów
-    exp: 10               # 10 exp
+    chance: 0.7
+    amount: 1-2
+    height: -64-16
+    points: 8-15
+    exp: 10
     fortune: true
-    neededlvl: 15         # Od poziomu 15
+    neededlvl: 15
 
-  # === TIER 4: Bardzo rzadkie rudy (poziom 20+) ===
   emerald:
     name: "Szmaragd"
     item: "material:emerald"
-    chance: 1.5           # 1.5% szansa
-    amount: 1-2           # 1-2 sztuki
-    height: -64-320       # Wypada na wszystkich wysokościach
-    points: 10-18         # 10-18 punktów
-    exp: 12               # 12 exp
+    chance: 0.3
+    amount: 1-2
+    height: -64-320
+    points: 10-18
+    exp: 12
     fortune: true
     neededlvl: 20
 
-  # === TIER 5: Legendarne (poziom 30+) ===
   netherite_scrap:
     name: "Netherite Scrap"
     item: "material:netherite_scrap"
-    chance: 0.5           # 0.5% szansa (bardzo rzadkie!)
-    amount: 1-1           # Zawsze 1 sztuka
-    height: -64-16        # Tylko w najgłębszych warstwach
-    points: 20-30         # 20-30 punktów
-    exp: 20               # 20 exp
-    fortune: false        # Fortune NIE działa na netherite
-    neededlvl: 30         # Wymaga poziomu 30 aby odblokować
-
+    chance: 0.1
+    amount: 1-1
+    height: -64-16
+    points: 20-30
+    exp: 20
+    fortune: false
+    neededlvl: 30
 # Doświadczenie za kopanie bloków (bez dropu)
 exps:
   stone: 1             # Exp za kopanie stone/granite/diorite/andesite/deepslate

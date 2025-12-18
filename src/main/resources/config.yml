@@ -70,13 +70,13 @@ gui:
   locked:
     # Wyświetlanie zablokowanych dropów (wymagany poziom gracza)
     name: "&c&lZABLOKOWANY DROP"
-    item: MAGMA_CREAM
+    item: BARRIER
     lores:
       - "&7Drop: &e{DROP-NAME}"
       - "&7Wymaga poziomu: &c{NEEDED-LEVEL}"
-      - "&7Twój poziom: &e{PLAYER-LEVEL}"
+      - "&7Twój poziom: &a{PLAYER-LEVEL}"
       - ""
-      - "&cMusisz osiągnąć poziom {NEEDED-LEVEL} aby odblokować!"
+      - "&cMusisz osiągnąć poziom &e{NEEDED-LEVEL} &caby odblokować!"
   cobble:
     name: "&2&lCobblestone"
     status: true
