@@ -138,10 +138,10 @@ public class DropManager {
                     if (user.getPlayer() != null && user.getPlayer().hasPermission(permChance.getPerm())) {
                         Double c = permChance.getChance();
                         if (c != null) {
-                            // Normalizujemy wartość bonusu tak samo jak główną szansę
-                            // Jeśli c > 1.0, to traktujemy jako procent, dzielimy przez 100
-                            // Jeśli c <= 1.0, to już jest znormalizowane
-                            double bonus = c > 1.0 ? c / 100.0 : c;
+                            // W nowym formacie wartość jest bezpośrednio w procentach
+                            // np. 0.5 = +0.5% szansy = +0.005 do szansy
+                            // Wartość jest zawsze dzielona przez 100 aby uzyskać wartość dziesiętną
+                            double bonus = c / 100.0;
                             chance += bonus;
                         }
                     }

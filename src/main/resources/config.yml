@@ -78,9 +78,12 @@ settings:
     status: true
     message: "&6TurboDrop dostepny jeszcze przez: &f{TIME}&6!"
   # Bonusy do szansy na drop z permisji (sprawdzane na żywo, działają bez restartu)
-  # Nowy format: klucz jest nazwą grupy, każda grupa ma swoją permisję i dodatek do szansy
-  # additionalchance: dodatkowa szansa w procentach (np. 0.5 = +0.5% szansy)
-  # Dla kompatybilności wstecznej, stary format "permisja@wartość" również działa
+  # Format: każdy klucz to nazwa grupy z jej ustawieniami
+  # permission: permisja która jest sprawdzana (np. dropplugin.vip)
+  # additionalchance: dodatkowa szansa w procentach (np. 0.5 = +0.5% szansy do każdego dropu)
+  # 
+  # Przykład: gracz z permisją dropplugin.vip otrzyma +0.5% szansy na każdy drop
+  # Można dodać więcej grup (np. premium, mvp) z różnymi permisami i wartościami
   chances:
     vip:
       permission: dropplugin.vip
