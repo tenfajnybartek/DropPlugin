@@ -43,7 +43,7 @@ settings:
   # Wartości 0.0-1.0 = bezpośredni bonus (np. 0.05 = +0.05 szansy)
   # Przykład: "drop.vip@5.0" daje +5% szansy graczom z permisją drop.vip
   chances:
-    - "drop.vip@5.0"
+    - "dropplugin.vip@5.0"
 gui:
   name: "&2&lDrop ze Stone"
   size: 36

@@ -46,7 +46,7 @@ public class LevelCommand implements CommandExecutor {
         }
 
         if (args.length == 1) {
-            if (!sender.hasPermission("tfbhc.cmd.alevel")) {
+            if (!sender.hasPermission("dropplugin.cmd.alevel")) {
                 ChatUtils.sendMessage(sender, "&4Blad: &cNie masz uprawnien do sprawdzania innych graczy! &7(tfbhc.cmd.alevel)");
                 return true;
             }
