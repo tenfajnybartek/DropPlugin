@@ -127,21 +127,26 @@ public class DropManager {
 
                 double chance = drop.getChance();
 
-                if (drop.isFortune() && tool != null) {
-                    int fortuneLevel = tool.getEnchantments().getOrDefault(Enchantment.FORTUNE, 0);
-                    if (fortuneLevel > 0) {
-                        chance += (fortuneLevel / 100.0);
-                    }
-                }
-
-                if (this.config.isTurboDrop() || user.isTurboDrop()) {
-                    chance *= 2.0;
-                }
-
+                // Dodaj bonusy od permisji do szansy
                 for (Chance permChance : this.config.getChances().values()) {
                     if (user.getPlayer().hasPermission(permChance.getPerm())) {
                         Double c = permChance.getChance();
                         if (c != null) chance += c.doubleValue() / 100.0;
+                    }
+                }
+
+                // TurboDrop zwiększa szansę, ale musimy uważać żeby nie przekroczyć 1.0
+                // bo RandomUtils.getChance() źle normalizuje wartości > 1.0
+                if (this.config.isTurboDrop() || user.isTurboDrop()) {
+                    chance = Math.min(chance * 2.0, 1.0);
+                }
+
+                // Fortune zwiększa szansę na drop (nie ilość - to jest obsługiwane później)
+                if (drop.isFortune() && tool != null) {
+                    int fortuneLevel = tool.getEnchantments().getOrDefault(Enchantment.FORTUNE, 0);
+                    if (fortuneLevel > 0) {
+                        // Każdy poziom Fortune dodaje 10% do szansy
+                        chance = Math.min(chance + (fortuneLevel * 0.10), 1.0);
                     }
                 }
 
@@ -151,7 +156,35 @@ public class DropManager {
                     ItemUtils.recalculateDurability(event.getPlayer(), tool);
                 }
 
+                // Podstawowa ilość z konfiguracji
                 int amount = drop.getAmount() != null ? drop.getAmount().random() : 1;
+                
+                // Fortune zwiększa ilość przedmiotów (zgodnie z mechaniką Minecrafta)
+                if (drop.isFortune() && tool != null) {
+                    int fortuneLevel = tool.getEnchantments().getOrDefault(Enchantment.FORTUNE, 0);
+                    if (fortuneLevel > 0) {
+                        // Fortune I: 33% szansa na +1 item
+                        // Fortune II: 50% szansa na +1-2 items  
+                        // Fortune III: 60% szansa na +1-3 items
+                        // Zgodnie z mechaniką Minecrafta dla diamentów i innych rud
+                        int bonus = 0;
+                        double bonusChance = RandomUtils.RANDOM_INSTANCE.nextDouble();
+                        
+                        if (fortuneLevel == 1) {
+                            if (bonusChance < 0.33) bonus = 1;
+                        } else if (fortuneLevel == 2) {
+                            if (bonusChance < 0.50) {
+                                bonus = RandomUtils.getRandInt(1, 2);
+                            }
+                        } else if (fortuneLevel >= 3) {
+                            if (bonusChance < 0.60) {
+                                bonus = RandomUtils.getRandInt(1, 3);
+                            }
+                        }
+                        
+                        amount += bonus;
+                    }
+                }
                 int exp = drop.getExp() * amount;
                 if (this.config.isTurboExp() || user.isTurboExp()) exp *= 2;
                 event.getPlayer().giveExp(exp);
