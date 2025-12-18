@@ -76,10 +76,10 @@ public final class Drop {
      */
     private static double normalizeChance(double c) {
         if (c < 0.0) {
-            throw new IllegalArgumentException("chance must be >= 0.0");
+            throw new IllegalArgumentException("chance must be >= 0.0 (percentage value, e.g., 1.2 for 1.2%)");
         }
         if (c > 100.0) {
-            throw new IllegalArgumentException("chance must be <= 100.0");
+            throw new IllegalArgumentException("chance must be <= 100.0 (percentage value, max 100%)");
         }
         // Wszystkie wartości są traktowane jako procenty i dzielone przez 100
         return c / 100.0;

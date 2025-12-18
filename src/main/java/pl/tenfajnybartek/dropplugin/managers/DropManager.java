@@ -138,9 +138,8 @@ public class DropManager {
                     if (user.getPlayer() != null && user.getPlayer().hasPermission(permChance.getPerm())) {
                         Double c = permChance.getChance();
                         if (c != null) {
-                            // W nowym formacie wartość jest bezpośrednio w procentach
-                            // np. 0.5 = +0.5% szansy = +0.005 do szansy
-                            // Wartość jest zawsze dzielona przez 100 aby uzyskać wartość dziesiętną
+                            // Chance.getChance() zwraca wartość z config (np. 0.5 dla 0.5%)
+                            // Dzielimy przez 100 aby skonwertować do prawdopodobieństwa (0.5% → 0.005)
                             double bonus = c / 100.0;
                             chance += bonus;
                         }

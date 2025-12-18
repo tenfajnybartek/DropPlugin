@@ -167,7 +167,8 @@ public class DropMenu {
 
         for (Chance chancee : this.config.getChances().values()) {
             if (viewer != null && viewer.hasPermission(chancee.getPerm())) {
-                // W nowym formacie wartość jest w procentach, więc dzielimy przez 100
+                // Chance.getChance() zwraca wartość z config (np. 0.5 dla 0.5%)
+                // Dzielimy przez 100 aby skonwertować do prawdopodobieństwa (0.5% → 0.005)
                 bonus += Objects.requireNonNullElse(chancee.getChance(), 0.0) / 100.0;
             }
         }
