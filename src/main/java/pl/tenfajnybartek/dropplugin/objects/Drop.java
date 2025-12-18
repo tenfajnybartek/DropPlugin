@@ -52,7 +52,7 @@ public final class Drop {
         
         // Ostrzeżenie gdy exp jest ujemne
         if (exp < 0) {
-            System.err.println("WARNING: Drop '" + name + "' ma ujemne exp (" + exp + "), ustawiono na 0");
+            java.util.logging.Logger.getLogger("DropPlugin").warning("Drop '" + name + "' ma ujemne exp (" + exp + "), ustawiono na 0");
             this.exp = 0;
         } else {
             this.exp = exp;
