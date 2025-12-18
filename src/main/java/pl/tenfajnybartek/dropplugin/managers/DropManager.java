@@ -50,12 +50,13 @@ public class DropManager {
                     double chance = section.getDouble("chance", 5.0);
                     boolean fortune = section.getBoolean("fortune", true);
                     int exp = section.getInt("exp", 3);
+                    int neededLevel = section.getInt("neededlvl", 0);
                     ItemStack itemStack = ParserUtils.parseItemStack(section.getString("item"));
                     if (itemStack == null) {
                         itemStack = new ItemStack(Material.STONE);
                     }
                     String name = section.getString("name", "Drop");
-                    Drop drop = new Drop(name, fortune, itemStack, chance, height, amount, points, exp);
+                    Drop drop = new Drop(name, fortune, itemStack, chance, height, amount, points, exp, neededLevel);
                     this.addDrop(drop);
                 }
             }
@@ -120,6 +121,10 @@ public class DropManager {
             
             for (Drop drop : this.dropList) {
                 if (drop == null || user.isDisabled(drop)) continue;
+                
+                // Sprawdź czy gracz ma wymagany poziom dla tego dropu
+                if (!drop.isUnlocked(user.getLvl())) continue;
+                
                 Count h = drop.getHeight();
                 if (h != null) {
                     if (playerY > h.getMax() || playerY < h.getMin()) continue;
@@ -127,16 +132,22 @@ public class DropManager {
 
                 double chance = drop.getChance();
 
-                // Dodaj bonusy od permisji do szansy
+                // Dodaj bonusy od permisji do szansy (sprawdzane dynamicznie przy każdym dropie)
+                // Permisje są sprawdzane na żywo, więc zmiany permisji działają natychmiast
                 for (Chance permChance : this.config.getChances().values()) {
-                    if (user.getPlayer().hasPermission(permChance.getPerm())) {
+                    if (user.getPlayer() != null && user.getPlayer().hasPermission(permChance.getPerm())) {
                         Double c = permChance.getChance();
-                        if (c != null) chance += c.doubleValue() / 100.0;
+                        if (c != null) {
+                            // Normalizujemy wartość bonusu tak samo jak główną szansę
+                            // Jeśli c > 1.0, to traktujemy jako procent, dzielimy przez 100
+                            // Jeśli c <= 1.0, to już jest znormalizowane
+                            double bonus = c > 1.0 ? c / 100.0 : c;
+                            chance += bonus;
+                        }
                     }
                 }
 
                 // TurboDrop zwiększa szansę, ale musimy uważać żeby nie przekroczyć 1.0
-                // bo RandomUtils.getChance() źle normalizuje wartości > 1.0
                 if (this.config.isTurboDrop() || user.isTurboDrop()) {
                     chance = Math.min(chance * 2.0, 1.0);
                 }

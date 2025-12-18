@@ -37,8 +37,13 @@ settings:
   actionbar:
     status: true
     message: "&6TurboDrop dostepny jeszcze przez: &f{TIME}&6!"
+  # Bonusy do szansy na drop z permisji (sprawdzane na żywo, działają bez restartu)
+  # Format: "permisja@wartość"
+  # Wartości > 1.0 = procenty (np. 5.0 = +5% szansy, 0.5 = +0.5% szansy)
+  # Wartości 0.0-1.0 = bezpośredni bonus (np. 0.05 = +0.05 szansy)
+  # Przykład: "drop.vip@5.0" daje +5% szansy graczom z permisją drop.vip
   chances:
-    - "drop.vip@0.5"
+    - "drop.vip@5.0"
 gui:
   name: "&2&lDrop ze Stone"
   size: 36
@@ -62,6 +67,16 @@ gui:
       - "&8* &7Wlaczony: {STATUS}"
       - ""
       - "&8* &7Wykopales juz: &2{MINED} &7szt."
+  locked:
+    # Wyświetlanie zablokowanych dropów (wymagany poziom gracza)
+    name: "&c&lZABLOKOWANY DROP"
+    item: MAGMA_CREAM
+    lores:
+      - "&7Drop: &e{DROP-NAME}"
+      - "&7Wymaga poziomu: &c{NEEDED-LEVEL}"
+      - "&7Twój poziom: &e{PLAYER-LEVEL}"
+      - ""
+      - "&cMusisz osiągnąć poziom {NEEDED-LEVEL} aby odblokować!"
   cobble:
     name: "&2&lCobblestone"
     status: true
