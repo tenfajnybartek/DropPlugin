@@ -127,16 +127,22 @@ public class DropManager {
 
                 double chance = drop.getChance();
 
-                // Dodaj bonusy od permisji do szansy
+                // Dodaj bonusy od permisji do szansy (sprawdzane dynamicznie przy każdym dropie)
+                // Permisje są sprawdzane na żywo, więc zmiany permisji działają natychmiast
                 for (Chance permChance : this.config.getChances().values()) {
-                    if (user.getPlayer().hasPermission(permChance.getPerm())) {
+                    if (user.getPlayer() != null && user.getPlayer().hasPermission(permChance.getPerm())) {
                         Double c = permChance.getChance();
-                        if (c != null) chance += c.doubleValue() / 100.0;
+                        if (c != null) {
+                            // Normalizujemy wartość bonusu tak samo jak główną szansę
+                            // Jeśli c > 1.0, to traktujemy jako procent, dzielimy przez 100
+                            // Jeśli c <= 1.0, to już jest znormalizowane
+                            double bonus = c > 1.0 ? c / 100.0 : c;
+                            chance += bonus;
+                        }
                     }
                 }
 
                 // TurboDrop zwiększa szansę, ale musimy uważać żeby nie przekroczyć 1.0
-                // bo RandomUtils.getChance() źle normalizuje wartości > 1.0
                 if (this.config.isTurboDrop() || user.isTurboDrop()) {
                     chance = Math.min(chance * 2.0, 1.0);
                 }

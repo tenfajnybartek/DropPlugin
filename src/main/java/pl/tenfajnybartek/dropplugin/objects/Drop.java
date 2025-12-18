@@ -59,13 +59,27 @@ public final class Drop {
         }
     }
 
+    /**
+     * Normalizuje wartość szansy do zakresu 0.0-1.0.
+     * Nowa logika:
+     * - Wartości 0.0-1.0 → pozostają bez zmian (np. 0.6 = 0.6%)
+     * - Wartości > 1.0 → dzielone przez 100 (np. 60.0 = 60%)
+     * 
+     * @param c Wartość szansy do znormalizowania
+     * @return Znormalizowana wartość szansy (0.0-1.0)
+     */
     private static double normalizeChance(double c) {
-        if (c > 1.0 && c <= 100.0) {
+        if (c < 0.0) {
+            throw new IllegalArgumentException("chance must be >= 0.0");
+        }
+        if (c > 100.0) {
+            throw new IllegalArgumentException("chance must be <= 100.0");
+        }
+        // Wartości > 1.0 traktujemy jako procenty (dzielone przez 100)
+        if (c > 1.0) {
             return c / 100.0;
         }
-        if (c < 0.0 || c > 1.0) {
-            throw new IllegalArgumentException("chance must be between 0.0 and 1.0 (or 0-100 as percent)");
-        }
+        // Wartości 0.0-1.0 pozostają bez zmian
         return c;
     }
 

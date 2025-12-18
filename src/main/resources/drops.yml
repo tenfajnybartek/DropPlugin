@@ -2,7 +2,9 @@
 # Każdy drop może zawierać:
 # - name: Nazwa dropu wyświetlana graczom
 # - item: Item w formacie "material:MATERIAL_NAME"
-# - chance: Szansa na drop (0-100, można też używać wartości 0.0-1.0)
+# - chance: Szansa na drop
+#           Wartości > 1.0 = procenty (np. 60.0 = 60%, 5.5 = 5.5%)
+#           Wartości 0.0-1.0 = bezpośrednia szansa (np. 0.6 = 0.6%, 0.05 = 0.05%)
 # - amount: Zakres ilości itemów (np. 1-3) - bazowa ilość bez Fortune
 # - height: Zakres wysokości Y gdzie drop jest dostępny (np. -64-90 dla pełnego zakresu)
 #           UWAGA: Od Minecraft 1.18+ minimalna wysokość to -64, maksymalna to 320
