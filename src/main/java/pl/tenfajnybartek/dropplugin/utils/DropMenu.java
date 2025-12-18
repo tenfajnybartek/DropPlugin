@@ -84,17 +84,35 @@ public class DropMenu {
                 .build();
 
         for (Drop drop : this.dropManager.getDropList()) {
-            ItemBuilder item = new ItemBuilder(drop.getItemStack().getType())
-                    .setName(StringUtils.replace(this.config.getGuiItemName(), "{NAME}", drop.getName()))
-                    .setLore(this.config.getGuiItemLores().stream()
-                            .map(entry -> this.replaced(user, drop, entry))
-                            .collect(Collectors.toList()));
+            int playerLevel = (user != null) ? user.getLvl() : 1;
+            boolean isLocked = !drop.isUnlocked(playerLevel);
+            
+            ItemBuilder item;
+            if (isLocked) {
+                // Zablokowany drop - pokazuj jako MAGMA_CREAM
+                item = new ItemBuilder(org.bukkit.Material.MAGMA_CREAM)
+                        .setName("&c&lZABLOKOWANY DROP")
+                        .setLore(java.util.Arrays.asList(
+                                "&7Drop: &e" + drop.getName(),
+                                "&7Wymaga poziomu: &c" + drop.getNeededLevel(),
+                                "&7Twój poziom: &e" + playerLevel,
+                                "",
+                                "&cMusisz osiągnąć poziom " + drop.getNeededLevel() + " aby odblokować!"
+                        ));
+            } else {
+                // Odblokowany drop - normalne wyświetlanie
+                item = new ItemBuilder(drop.getItemStack().getType())
+                        .setName(StringUtils.replace(this.config.getGuiItemName(), "{NAME}", drop.getName()))
+                        .setLore(this.config.getGuiItemLores().stream()
+                                .map(entry -> this.replaced(user, drop, entry))
+                                .collect(Collectors.toList()));
 
-            if (this.config.isEnchanted()) {
-                boolean enabledForUser = !(user != null && user.isDisabled(drop));
-                if (enabledForUser) {
-                    item.addEnchant(Enchantment.UNBREAKING, 1);
-                    item.setFlag(ItemFlag.HIDE_ENCHANTS);
+                if (this.config.isEnchanted()) {
+                    boolean enabledForUser = !(user != null && user.isDisabled(drop));
+                    if (enabledForUser) {
+                        item.addEnchant(Enchantment.UNBREAKING, 1);
+                        item.setFlag(ItemFlag.HIDE_ENCHANTS);
+                    }
                 }
             }
 

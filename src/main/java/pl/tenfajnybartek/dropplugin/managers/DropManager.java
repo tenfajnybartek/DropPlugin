@@ -50,12 +50,13 @@ public class DropManager {
                     double chance = section.getDouble("chance", 5.0);
                     boolean fortune = section.getBoolean("fortune", true);
                     int exp = section.getInt("exp", 3);
+                    int neededLevel = section.getInt("neededlvl", 0);
                     ItemStack itemStack = ParserUtils.parseItemStack(section.getString("item"));
                     if (itemStack == null) {
                         itemStack = new ItemStack(Material.STONE);
                     }
                     String name = section.getString("name", "Drop");
-                    Drop drop = new Drop(name, fortune, itemStack, chance, height, amount, points, exp);
+                    Drop drop = new Drop(name, fortune, itemStack, chance, height, amount, points, exp, neededLevel);
                     this.addDrop(drop);
                 }
             }
@@ -120,6 +121,10 @@ public class DropManager {
             
             for (Drop drop : this.dropList) {
                 if (drop == null || user.isDisabled(drop)) continue;
+                
+                // Sprawdź czy gracz ma wymagany poziom dla tego dropu
+                if (!drop.isUnlocked(user.getLvl())) continue;
+                
                 Count h = drop.getHeight();
                 if (h != null) {
                     if (playerY > h.getMax() || playerY < h.getMin()) continue;

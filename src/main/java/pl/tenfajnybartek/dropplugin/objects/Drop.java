@@ -17,6 +17,7 @@ public final class Drop {
     private final Count amount;
     private final Count points;
     private final int exp;
+    private final int neededLevel;
 
     /**
      * Tworzy nowy obiekt Drop.
@@ -29,6 +30,7 @@ public final class Drop {
      * @param amount Zakres ilości itemów które mogą wypaść
      * @param points Zakres punktów doświadczenia za wykopanie
      * @param exp Ilość Minecraft XP za wykopanie
+     * @param neededLevel Minimalny poziom gracza wymagany do odblokowaniа dropu (0 = brak wymagania)
      * @throws IllegalArgumentException jeśli name lub itemStack są null/puste
      */
     public Drop(String name,
@@ -38,7 +40,8 @@ public final class Drop {
                 Count height,
                 Count amount,
                 Count points,
-                int exp) {
+                int exp,
+                int neededLevel) {
         if (name == null || name.isEmpty()) throw new IllegalArgumentException("name cannot be null/empty");
         if (itemStack == null) throw new IllegalArgumentException("itemStack cannot be null");
 
@@ -48,6 +51,7 @@ public final class Drop {
         this.chance = normalizeChance(chance);
         this.height = height;
         this.amount = amount;
+        this.neededLevel = Math.max(0, neededLevel);
         this.points = points;
         
         // Ostrzeżenie gdy exp jest ujemne
@@ -115,6 +119,23 @@ public final class Drop {
         return this.exp;
     }
 
+    /**
+     * @return Minimalny poziom wymagany do odblokowania dropu (0 = brak wymagania)
+     */
+    public int getNeededLevel() {
+        return this.neededLevel;
+    }
+
+    /**
+     * Sprawdza czy gracz ma wystarczający poziom aby odblokować ten drop.
+     * 
+     * @param playerLevel Aktualny poziom gracza
+     * @return true jeśli drop jest odblokowany dla tego poziomu
+     */
+    public boolean isUnlocked(int playerLevel) {
+        return playerLevel >= this.neededLevel;
+    }
+
     @Override
     public String toString() {
         return "Drop{" +
@@ -125,6 +146,7 @@ public final class Drop {
                 ", amount=" + amount +
                 ", points=" + points +
                 ", exp=" + exp +
+                ", neededLevel=" + neededLevel +
                 '}';
     }
 
