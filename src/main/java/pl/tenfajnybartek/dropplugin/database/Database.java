@@ -18,6 +18,7 @@ public class Database {
     private final DropPlugin plugin;
     private final Logger logger;
     private HikariDataSource ds;
+    private String dbType;
 
     public Database(DropPlugin plugin) {
         this.plugin = plugin;
@@ -26,57 +27,101 @@ public class Database {
 
         // Inicjalizacja asynchroniczna
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            this.logger.info("Łączenie z bazą danych...");
             ConfigManager config = plugin.getPluginConfig();
+            this.dbType = config.getDbType();
+            
+            this.logger.info("Łączenie z bazą danych (" + this.dbType.toUpperCase() + ")...");
 
-            String host = config.getDbHost();
-            int port = config.getDbPort();
-            String base = config.getDbBase();
-            String user = config.getDbUser();
-            String pass = config.getDbPass();
-            int maxPool = config.getDbMaxPool() > 0 ? config.getDbMaxPool() : 10;
-
-            String jdbcUrl = String.format("jdbc:mysql://%s:%d/%s?useSSL=false&serverTimezone=UTC", host, port, base);
-
+            String jdbcUrl;
             HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setJdbcUrl(jdbcUrl);
-            hikariConfig.setUsername(user);
-            hikariConfig.setPassword(pass);
-            hikariConfig.setMaximumPoolSize(maxPool);
-            hikariConfig.setConnectionTimeout(config.getDbConnectionTimeoutMs());
-            hikariConfig.setIdleTimeout(config.getDbIdleTimeoutMs());
-            if (config.getDbLeakDetectionThresholdMs() > 0) {
-                hikariConfig.setLeakDetectionThreshold(config.getDbLeakDetectionThresholdMs());
-            }
+            
+            if ("sqlite".equalsIgnoreCase(dbType)) {
+                // SQLite configuration
+                java.io.File dataFolder = plugin.getDataFolder();
+                if (!dataFolder.exists()) {
+                    dataFolder.mkdirs();
+                }
+                java.io.File dbFile = new java.io.File(dataFolder, "database.db");
+                jdbcUrl = "jdbc:sqlite:" + dbFile.getAbsolutePath();
+                
+                hikariConfig.setJdbcUrl(jdbcUrl);
+                hikariConfig.setMaximumPoolSize(1); // SQLite works best with single connection
+                hikariConfig.setConnectionTimeout(config.getDbConnectionTimeoutMs());
+                
+                // SQLite specific properties
+                hikariConfig.addDataSourceProperty("journal_mode", "WAL");
+                hikariConfig.addDataSourceProperty("synchronous", "NORMAL");
+                
+                this.logger.info("Używam SQLite: " + dbFile.getAbsolutePath());
+            } else {
+                // MySQL configuration
+                String host = config.getDbHost();
+                int port = config.getDbPort();
+                String base = config.getDbBase();
+                String user = config.getDbUser();
+                String pass = config.getDbPass();
+                int maxPool = config.getDbMaxPool() > 0 ? config.getDbMaxPool() : 10;
 
-            hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
-            hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
-            hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+                jdbcUrl = String.format("jdbc:mysql://%s:%d/%s?useSSL=false&serverTimezone=UTC", host, port, base);
+
+                hikariConfig.setJdbcUrl(jdbcUrl);
+                hikariConfig.setUsername(user);
+                hikariConfig.setPassword(pass);
+                hikariConfig.setMaximumPoolSize(maxPool);
+                hikariConfig.setConnectionTimeout(config.getDbConnectionTimeoutMs());
+                hikariConfig.setIdleTimeout(config.getDbIdleTimeoutMs());
+                if (config.getDbLeakDetectionThresholdMs() > 0) {
+                    hikariConfig.setLeakDetectionThreshold(config.getDbLeakDetectionThresholdMs());
+                }
+
+                hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
+                hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
+                hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+                
+                this.logger.info("Używam MySQL: " + host + ":" + port + "/" + base);
+            }
 
             try {
                 ds = new HikariDataSource(hikariConfig);
                 this.logger.info("Połączono z bazą danych!");
             } catch (Exception e) {
-                this.logger.warning("Nie można połączyć z bazą danych!");
+                this.logger.warning("Nie można połączyć z bazą danych " + dbType.toUpperCase() + "!");
                 e.printStackTrace();
                 Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getPluginManager().disablePlugin((Plugin) plugin));
                 return;
             }
 
             // Tworzenie tabeli jeśli nie istnieje
+            // Używamy uniwersalnej składni SQL kompatybilnej z SQLite i MySQL
             try (Connection conn = ds.getConnection();
                  Statement st = conn.createStatement()) {
-                st.executeUpdate("CREATE TABLE IF NOT EXISTS `drop_users` (" +
-                        "identifier VARCHAR(255) NOT NULL, " +
-                        "cobble BOOLEAN NOT NULL, " +
-                        "messages BOOLEAN NOT NULL, " +
-                        "turboDrop BIGINT(22) NOT NULL, " +
-                        "turboExp BIGINT(22) NOT NULL, " +
-                        "lvl INT(11) NOT NULL, " +
-                        "points INT(11) NOT NULL, " +
-                        "minedDrops TEXT NOT NULL, " +
-                        "disabledDrops TEXT NOT NULL, " +
-                        "PRIMARY KEY(identifier));");
+                String createTableSQL;
+                if ("sqlite".equalsIgnoreCase(dbType)) {
+                    createTableSQL = "CREATE TABLE IF NOT EXISTS drop_users (" +
+                            "identifier TEXT PRIMARY KEY NOT NULL, " +
+                            "cobble INTEGER NOT NULL, " +
+                            "messages INTEGER NOT NULL, " +
+                            "turboDrop INTEGER NOT NULL, " +
+                            "turboExp INTEGER NOT NULL, " +
+                            "lvl INTEGER NOT NULL, " +
+                            "points INTEGER NOT NULL, " +
+                            "minedDrops TEXT NOT NULL, " +
+                            "disabledDrops TEXT NOT NULL)";
+                } else {
+                    createTableSQL = "CREATE TABLE IF NOT EXISTS `drop_users` (" +
+                            "identifier VARCHAR(255) NOT NULL, " +
+                            "cobble BOOLEAN NOT NULL, " +
+                            "messages BOOLEAN NOT NULL, " +
+                            "turboDrop BIGINT NOT NULL, " +
+                            "turboExp BIGINT NOT NULL, " +
+                            "lvl INT NOT NULL, " +
+                            "points INT NOT NULL, " +
+                            "minedDrops TEXT NOT NULL, " +
+                            "disabledDrops TEXT NOT NULL, " +
+                            "PRIMARY KEY(identifier))";
+                }
+                st.executeUpdate(createTableSQL);
+                this.logger.info("Tabela drop_users została utworzona/sprawdzona.");
             } catch (SQLException e) {
                 this.logger.warning("Nie można utworzyć tabel w bazie danych!");
                 e.printStackTrace();
@@ -129,13 +174,28 @@ public class Database {
         }
 
         Runnable task = () -> {
-            String sql = "REPLACE INTO drop_users (identifier, cobble, messages, turboDrop, turboExp, lvl, points, minedDrops, disabledDrops) VALUES (?,?,?,?,?,?,?,?,?)";
+            // SQLite używa INSERT OR REPLACE, MySQL używa REPLACE INTO
+            String sql;
+            if ("sqlite".equalsIgnoreCase(this.dbType)) {
+                sql = "INSERT OR REPLACE INTO drop_users (identifier, cobble, messages, turboDrop, turboExp, lvl, points, minedDrops, disabledDrops) VALUES (?,?,?,?,?,?,?,?,?)";
+            } else {
+                sql = "REPLACE INTO drop_users (identifier, cobble, messages, turboDrop, turboExp, lvl, points, minedDrops, disabledDrops) VALUES (?,?,?,?,?,?,?,?,?)";
+            }
+            
             try (Connection conn = ds.getConnection();
                  PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
                 preparedStatement.setString(1, user.getIdentifier().toString());
-                preparedStatement.setBoolean(2, user.isCobble());
-                preparedStatement.setBoolean(3, user.isMessages());
+                
+                // SQLite używa INTEGER dla BOOLEAN (0/1)
+                if ("sqlite".equalsIgnoreCase(this.dbType)) {
+                    preparedStatement.setInt(2, user.isCobble() ? 1 : 0);
+                    preparedStatement.setInt(3, user.isMessages() ? 1 : 0);
+                } else {
+                    preparedStatement.setBoolean(2, user.isCobble());
+                    preparedStatement.setBoolean(3, user.isMessages());
+                }
+                
                 preparedStatement.setLong(4, user.getTurboDrop());
                 preparedStatement.setLong(5, user.getTurboExp());
                 preparedStatement.setInt(6, user.getLvl());

@@ -1,5 +1,40 @@
 # Changelog - DropPlugin
 
+## [SQLite Support] - 2025-12-18
+
+### ✨ Nowe Funkcje
+
+**Wsparcie dla SQLite jako alternatywy dla MySQL**
+- Plugin teraz obsługuje zarówno SQLite jak i MySQL
+- SQLite jest domyślną bazą danych (brak konfiguracji)
+- Wybór bazy w `config.yml` przez `database.type: sqlite` lub `mysql`
+- Automatyczne tworzenie pliku `database.db` w folderze pluginu dla SQLite
+- Uniwersalne zapytania SQL kompatybilne z obiema bazami
+- SQLite używa WAL mode dla lepszej wydajności
+
+### 🔧 Zmiany Techniczne
+
+- Dodano zależność `org.xerial:sqlite-jdbc:3.45.0.0`
+- Dodano pole `dbType` w ConfigManager
+- Zaktualizowano Database class z obsługą obu typów baz
+- Automatyczna detekcja typu bazy i odpowiednie konfigurowanie HikariCP
+- SQLite używa `INSERT OR REPLACE` zamiast `REPLACE INTO`
+- Obsługa INTEGER jako BOOLEAN w SQLite
+
+### 📝 Aktualizacje Dokumentacji
+
+- Zaktualizowano README.md z sekcją wyboru bazy danych
+- Dodano porównanie SQLite vs MySQL
+- Zaktualizowano instrukcję instalacji
+- Dodano przykłady konfiguracji dla obu baz
+
+### 💡 Zalety SQLite
+
+- Brak wymagań zewnętrznych (nie trzeba instalować MySQL)
+- Automatyczna konfiguracja
+- Idealne dla małych/średnich serwerów
+- Łatwe backupy (jeden plik)
+
 ## [PlaceholderAPI & Negative Y Support] - 2025-12-18
 
 ### ✨ Nowe Funkcje

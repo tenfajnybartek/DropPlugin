@@ -10,6 +10,7 @@ import java.util.*;
 
 public class ConfigManager {
     private final HashMap<String, Chance> chances;
+    private final String dbType;
     private final String dbHost;
     private final String dbUser;
     private final String dbPass;
@@ -85,6 +86,7 @@ public class ConfigManager {
         this.plugin.saveDefaultConfig();
         FileConfiguration fc = this.plugin.getConfig();
 
+        this.dbType = getStringSafe(fc, "database.type", "sqlite").toLowerCase();
         this.dbHost = getStringSafe(fc, "database.host", "localhost");
         this.dbUser = getStringSafe(fc, "database.user", "root");
         this.dbPass = getStringSafe(fc, "database.password", "");
@@ -233,6 +235,7 @@ public class ConfigManager {
     public List<Integer> getChatLevels() { return this.chatLevels; }
     public String getLevelMessage() { return this.levelMessage; }
     public int getMaxLevel() { return this.maxLevel; }
+    public String getDbType() { return this.dbType; }
     public String getDbHost() { return this.dbHost; }
     public String getDbUser() { return this.dbUser; }
     public String getDbPass() { return this.dbPass; }
