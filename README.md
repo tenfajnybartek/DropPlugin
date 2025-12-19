@@ -41,6 +41,7 @@ Każdy drop posiada:
 - Ilość punktów i doświadczenia
 - Zakres ilości itemów
 - Support dla fortune enchant
+- Wymagany poziom do wydropienia przedmiotu
 
 **UWAGA**: Od Minecraft 1.18+ wspierane są wartości ujemne dla wysokości (od -64 do 320)
 
@@ -60,7 +61,7 @@ Każdy drop posiada:
 3. **(Opcjonalnie)** Skonfiguruj bazę danych w `config.yml`:
    - Domyślnie używa SQLite (brak konfiguracji)
    - Dla MySQL zmień `database.type: mysql` i skonfiguruj połączenie
-4. Zrestartuj serwer
+4. Zrestartuj serwer (Nie używaj /reload!)
 5. Plugin automatycznie utworzy wymagane tabele w bazie danych
 
 ## 🎮 Komendy i uprawnienia
@@ -99,8 +100,9 @@ Przykłady: `1d12h`, `30m`, `2h30m15s`
 Zdefiniowane w `config.yml -> settings.chances`:
 ```yaml
 chances:
-  - "drop.vip@5"      # +5% do szansy na drop
-  - "drop.svip@10"    # +10% do szansy na drop
+    vip:
+      permission: dropplugin.vip
+      additionalchance: 0.5
 ```
 
 ## 📊 System poziomów
@@ -124,12 +126,12 @@ chances:
 ### TurboDrop
 - Podwaja szansę na wszystkie dropy
 - Można włączyć globalnie lub dla konkretnego gracza
-- Wyświetlany w GUI i na ActionBar
+- Wyświetlany w GUI i na ActionBar w przypadku całego serwera
 
 ### TurboExp
 - Podwaja otrzymywane doświadczenie
 - Można włączyć globalnie lub dla konkretnego gracza
-- Wyświetlany w GUI
+- Wyświetlany w GUI i na ActionBar w przypadku całego serwera
 
 Oba eventy mogą działać jednocześnie (globalny + osobisty).
 
@@ -241,22 +243,6 @@ lore:
 - Upewnij się że używasz Paper/Purpur, nie Spigot
 - Sprawdź czy w `config.yml` jest `actionbar.status: true`
 
-## 📝 Changelog
-
-### v1.0.0-SNAPSHOT
-- Pierwsza wersja pluginu
-- System custom dropu ze stone
-- System poziomów i punktów
-- Turbo eventy (drop i exp)
-- GUI zarządzania
-- Integracja z MySQL przez HikariCP
-- ActionBar z informacjami o eventach
-- Fortune enchant support
-- Bonusy z permisji
-
-## 📄 Licencja
-
-Projekt jest własnością autora. Wszelkie prawa zastrzeżone.
 
 ---
 
