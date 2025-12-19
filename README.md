@@ -2,6 +2,19 @@
 
 Plugin dla serwerów Minecraft (Paper 1.21.4+) wprowadzający zaawansowany system customowego dropu ze stone oraz system poziomów dla graczy.
 
+## ✅ Obsługiwane wersje 
+
+✅ - Sprawdzone, działa!
+❓ - Nie testowane, lecz api jest pisane pod 1.21 więc powinno działac.
+
+✅ Paper 1.21.4
+❓ Paper 1.21.5
+❓ Paper 1.21.6
+❓ Paper 1.21.7
+❓ Paper 1.21.8
+❓ Paper 1.21.9
+❓ Paper 1.21.10
+❓ Paper 1.21.11
 
 ## 📖 Opis
 
