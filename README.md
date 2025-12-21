@@ -5,6 +5,7 @@ Plugin dla serwerów Minecraft (Paper 1.21.4+) wprowadzający zaawansowany syste
 ## ⚠️ Issues
 
 Jeśli znajdziesz jakieś błędy/bugi zgloś je w zakładce issues!
+https://github.com/tenfajnybartek/DropPlugin/issues
 
 ## ✅ Obsługiwane wersje 
 
