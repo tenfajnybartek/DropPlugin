@@ -8,10 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import pl.tenfajnybartek.dropplugin.base.DropPlugin;
 import pl.tenfajnybartek.dropplugin.objects.User;
 
-/**
- * PlaceholderAPI expansion dla DropPlugin.
- * Udostępnia placeholder %dropplugin_level% zwracający poziom kopania gracza.
- */
 public class DropPluginExpansion extends PlaceholderExpansion {
     
     private final DropPlugin plugin;
@@ -40,7 +36,7 @@ public class DropPluginExpansion extends PlaceholderExpansion {
     
     @Override
     public boolean persist() {
-        return true; // Expansion nie będzie wyrejestrowana przy reloadzie PlaceholderAPI
+        return true;
     }
     
     @Override
@@ -54,8 +50,7 @@ public class DropPluginExpansion extends PlaceholderExpansion {
         if (onlinePlayer == null) {
             return null;
         }
-        
-        // %dropplugin_level% - zwraca poziom kopania gracza
+
         if (params.equalsIgnoreCase("level")) {
             User user = plugin.getUserManager().getUserIfLoaded(onlinePlayer.getUniqueId());
             if (user == null) {
@@ -63,8 +58,7 @@ public class DropPluginExpansion extends PlaceholderExpansion {
             }
             return String.valueOf(user.getLvl());
         }
-        
-        // %dropplugin_points% - zwraca aktualne punkty gracza
+
         if (params.equalsIgnoreCase("points")) {
             User user = plugin.getUserManager().getUserIfLoaded(onlinePlayer.getUniqueId());
             if (user == null) {
@@ -72,8 +66,7 @@ public class DropPluginExpansion extends PlaceholderExpansion {
             }
             return String.valueOf(user.getPoints());
         }
-        
-        // %dropplugin_points_required% - zwraca punkty wymagane do następnego poziomu
+
         if (params.equalsIgnoreCase("points_required")) {
             User user = plugin.getUserManager().getUserIfLoaded(onlinePlayer.getUniqueId());
             if (user == null) {
@@ -81,8 +74,7 @@ public class DropPluginExpansion extends PlaceholderExpansion {
             }
             return String.valueOf(user.getPointsRequired());
         }
-        
-        // %dropplugin_points_to_next% - zwraca ile punktów brakuje do następnego poziomu
+
         if (params.equalsIgnoreCase("points_to_next")) {
             User user = plugin.getUserManager().getUserIfLoaded(onlinePlayer.getUniqueId());
             if (user == null) {
@@ -91,6 +83,6 @@ public class DropPluginExpansion extends PlaceholderExpansion {
             return String.valueOf(user.getPointsToNextLevel());
         }
         
-        return null; // Nieznany placeholder
+        return null;
     }
 }

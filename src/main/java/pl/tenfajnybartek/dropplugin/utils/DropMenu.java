@@ -89,7 +89,6 @@ public class DropMenu {
             
             ItemBuilder item;
             if (isLocked) {
-                // Zablokowany drop - konfigurowalny wygląd z config.yml
                 item = this.config.getLockedItem()
                         .setName(this.config.getGuiLockedName())
                         .setLore(this.config.getGuiLockedLores().stream()
@@ -99,7 +98,6 @@ public class DropMenu {
                                         .replace("{PLAYER-LEVEL}", String.valueOf(playerLevel)))
                                 .collect(Collectors.toList()));
             } else {
-                // Odblokowany drop - normalne wyświetlanie
                 item = new ItemBuilder(drop.getItemStack().getType())
                         .setName(StringUtils.replace(this.config.getGuiItemName(), "{NAME}", drop.getName()))
                         .setLore(this.config.getGuiItemLores().stream()
@@ -167,8 +165,6 @@ public class DropMenu {
 
         for (Chance chancee : this.config.getChances().values()) {
             if (viewer != null && viewer.hasPermission(chancee.getPerm())) {
-                // Chance.getChance() zwraca wartość z config (np. 0.5 dla 0.5%)
-                // Dzielimy przez 100 aby skonwertować do prawdopodobieństwa (0.5% → 0.005)
                 bonus += Objects.requireNonNullElse(chancee.getChance(), 0.0) / 100.0;
             }
         }
@@ -178,7 +174,6 @@ public class DropMenu {
             sumChance *= 2.0;
         }
 
-        // Konwertuj wartości prawdopodobieństwa (0.0-1.0) na procenty (0-100) do wyświetlenia
         entry = StringUtils.replace(entry, "{CHANCE}", String.format("%.2f", drop.getChance() * 100.0));
         entry = StringUtils.replace(entry, "{CHANCE-BONUS}", String.format("%.2f", bonus * 100.0));
         entry = StringUtils.replace(entry, "{CHANCE-SUM}", String.format("%.2f", sumChance * 100.0));

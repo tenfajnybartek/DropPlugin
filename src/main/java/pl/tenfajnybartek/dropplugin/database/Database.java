@@ -10,7 +10,6 @@ import pl.tenfajnybartek.dropplugin.objects.User;
 import pl.tenfajnybartek.dropplugin.utils.MapUtils;
 
 import java.sql.*;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 public class Database {
@@ -25,7 +24,6 @@ public class Database {
         this.logger = plugin.getLogger();
         database = this;
 
-        // Inicjalizacja asynchroniczna
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             ConfigManager config = plugin.getPluginConfig();
             this.dbType = config.getDbType();
@@ -36,7 +34,6 @@ public class Database {
             HikariConfig hikariConfig = new HikariConfig();
             
             if ("sqlite".equalsIgnoreCase(dbType)) {
-                // SQLite configuration
                 java.io.File dataFolder = plugin.getDataFolder();
                 if (!dataFolder.exists()) {
                     dataFolder.mkdirs();
@@ -45,16 +42,14 @@ public class Database {
                 jdbcUrl = "jdbc:sqlite:" + dbFile.getAbsolutePath();
                 
                 hikariConfig.setJdbcUrl(jdbcUrl);
-                hikariConfig.setMaximumPoolSize(1); // SQLite works best with single connection
+                hikariConfig.setMaximumPoolSize(1);
                 hikariConfig.setConnectionTimeout(config.getDbConnectionTimeoutMs());
-                
-                // SQLite specific properties
+
                 hikariConfig.addDataSourceProperty("journal_mode", "WAL");
                 hikariConfig.addDataSourceProperty("synchronous", "NORMAL");
                 
                 this.logger.info("Używam SQLite: " + dbFile.getAbsolutePath());
             } else {
-                // MySQL configuration
                 String host = config.getDbHost();
                 int port = config.getDbPort();
                 String base = config.getDbBase();
@@ -91,8 +86,6 @@ public class Database {
                 return;
             }
 
-            // Tworzenie tabeli jeśli nie istnieje
-            // Używamy uniwersalnej składni SQL kompatybilnej z SQLite i MySQL
             try (Connection conn = ds.getConnection();
                  Statement st = conn.createStatement()) {
                 String createTableSQL;
@@ -127,7 +120,6 @@ public class Database {
                 e.printStackTrace();
             }
 
-            // Ładowanie użytkowników z bazy
             int loadedUsers = 0;
             try (Connection conn = ds.getConnection();
                  PreparedStatement ps = conn.prepareStatement("SELECT * FROM drop_users");
@@ -159,7 +151,7 @@ public class Database {
     }
 
     public void saveUser(User user) {
-        saveUser(user, false); // domyślnie async
+        saveUser(user, false);
     }
 
     public void saveUser(User user, boolean sync) {
@@ -174,7 +166,6 @@ public class Database {
         }
 
         Runnable task = () -> {
-            // SQLite używa INSERT OR REPLACE, MySQL używa REPLACE INTO
             String sql;
             if ("sqlite".equalsIgnoreCase(this.dbType)) {
                 sql = "INSERT OR REPLACE INTO drop_users (identifier, cobble, messages, turboDrop, turboExp, lvl, points, minedDrops, disabledDrops) VALUES (?,?,?,?,?,?,?,?,?)";
@@ -186,8 +177,7 @@ public class Database {
                  PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
                 preparedStatement.setString(1, user.getIdentifier().toString());
-                
-                // SQLite używa INTEGER dla BOOLEAN (0/1)
+
                 if ("sqlite".equalsIgnoreCase(this.dbType)) {
                     preparedStatement.setInt(2, user.isCobble() ? 1 : 0);
                     preparedStatement.setInt(3, user.isMessages() ? 1 : 0);
@@ -214,15 +204,12 @@ public class Database {
         };
 
         if (sync) {
-            task.run(); // natychmiast, bez schedulerów!
+            task.run();
         } else {
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, task);
         }
     }
 
-    /**
-     * Wykonuje SELECT 1 aby utrzymać połączenie (asynchronicznie).
-     */
     public void sendEmptyUpdate() {
         if (ds == null) {
             logger.fine("DataSource nie zainicjalizowany - pomijam sendEmptyUpdate");
@@ -232,7 +219,6 @@ public class Database {
             try (Connection conn = ds.getConnection();
                  PreparedStatement statement = conn.prepareStatement("SELECT 1");
                  ResultSet rs = statement.executeQuery()) {
-                // nic do zrobienia, po prostu zapytanie
             } catch (Exception e) {
                 this.logger.warning("Nie można zaktualizować bazy danych!");
                 e.printStackTrace();
@@ -241,7 +227,7 @@ public class Database {
     }
 
     public void disconnect() {
-        disconnect(false); // domyślnie async
+        disconnect(false);
     }
 
     public void disconnect(boolean sync) {
@@ -258,7 +244,7 @@ public class Database {
         };
 
         if (sync) {
-            task.run(); // NATYCHMIASTOWE wykonie kodu bez schedulerów (SAFE na wyłączaniu pluginu)
+            task.run();
         } else {
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, task);
         }

@@ -21,7 +21,6 @@ public class BlockBreakListener implements Listener {
         try {
             this.dropManager.breakBlock(event);
         } catch (Exception e) {
-            // Log error but don't crash the plugin
             event.getPlayer().sendMessage("§cWystąpił błąd podczas przetwarzania dropu. Skontaktuj się z administratorem.");
             e.printStackTrace();
         }

@@ -54,7 +54,6 @@ public final class ItemBuilder {
     public ItemBuilder setName(String name) {
         if (name == null) return this;
         Component comp = LEGACY_SERIALIZER.deserialize(ChatUtils.colour(name));
-        // Paper API exposes displayName(Component)
         this.itemMeta.displayName(comp);
         this.refreshMeta();
         return this;

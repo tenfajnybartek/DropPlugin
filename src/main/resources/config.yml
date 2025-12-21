@@ -19,7 +19,7 @@ database:
 messages:
   turbo:
     message: "&eAdministrator: &6{ADMIN} &6wlaczyl {TYPE} &6na &e{TIME}"
-    get: "&6Otrzymales: &e{TYPE} &6na: &e{TIME}"
+    get: " &8* &7Otrzymales: &6&l{TYPE} &7na: &e{TIME}"
   drop: "&7Wydropiles: &6{DROP} &7x&a{AMOUNT} &7(+{PKT} pkt, +{EXP} exp) "
   commands:
     drop:
@@ -28,25 +28,25 @@ messages:
     adrop:
       no-permission: "&4Blad: &cNie masz uprawnien do tej komendy! &7(dropplugin.cmd.adrop)"
       usage:
-        - "&6Dostepne komendy dla adminow"
-        - "&6/adrop <drop/exp> <all> <time> &7- Nadaje turbo dla calego serwera."
-        - "&6/adrop <drop/exp> <player> <time> &7- Nadaje turbo dla jednego gracza."
-        - "&6/adrop reload - &7Przeladowywuje config"
-        - "&6/adrop level <nick_gracza> <poziom> <pkt> &7- Ustawia poziom gracza."
-        - "&7Standardowo 1 lvl - 0pkt, pamietaj x lvl * 500."
-      reloading: "&7Przeladowywanie..."
-      reloaded: "&eDrop &7przeladowano! ({TIME}s)"
+        - "&cDropPlugin (ADMIN COMMANDS):"
+        - " &8* &7/adrop <drop/exp> <all> <time> &7- &6Nadaje turbo dla calego serwera."
+        - " &8* &7/adrop <drop/exp> <player> <time> &7- &6Nadaje turbo dla jednego gracza."
+        - " &8* &7/adrop reload - &6Przeladowywuje config"
+        - " &8* &7/adrop level <nick_gracza> <poziom> <pkt> &7- &6Ustawia poziom gracza."
+        - "&cStandardowo 1 lvl - 0pkt, pamietaj x lvl * 500."
+      reloading: "&aPrzeładowywanie..."
+      reloaded: "&aDropPlugin został przeładowany! &7({TIME}s)"
       reload-error: "&4Blad: &cNie udalo sie przeladowac konfiguracji."
-      invalid-time: "&4Blad: &cNiepoprawny czas: {TIME}"
-      turbo-enabled: "&aWlaczyles {TYPE} na: {TIME}"
-      turbo-enabled-for: "&aWlaczyles {TYPE} na: {TIME} dla: {PLAYER}"
+      invalid-time: "&4Blad: &cNiepoprawny czas: &7{TIME}"
+      turbo-enabled: " &8* &aWlaczyles &7{TYPE} &ana: &7{TIME}"
+      turbo-enabled-for: " &8* &aWlaczyles &7{TYPE} &ana: &7{TIME} &adla: &7{PLAYER}"
       player-offline: "&4Blad: &cGracz jest offline!"
       player-data-error: "&4Blad: &cNie mozna zaladowac danych gracza!"
       level-min-max: "&4Blad: &cPoziom musi byc miedzy {MIN} a {MAX}!"
       level-not-number: "&4Blad: &cPodany poziom nie jest liczba!"
-      points-min-max: "&4Blad: &cPunkty musza byc miedzy {MIN} a {MAX}!"
+      points-min-max: "&4Blad: &cPunkty musza byc miedzy &7{MIN} &ca &7{MAX}!"
       points-not-number: "&4Blad: &cPodane punkty nie sa liczba!"
-      level-changed: "&aZmieniono poziom gracza &7{PLAYER} &az &7{OLD_LEVEL} &ana &7{NEW_LEVEL} &ai ustawiono punkty na &7{POINTS}"
+      level-changed: " &8* &aZmieniono poziom gracza &7{PLAYER} &az &7{OLD_LEVEL} &ana &7{NEW_LEVEL} &ai ustawiono punkty na &7{POINTS}"
     level:
       no-permission: "&4Blad: &cNie masz uprawnien do tej komendy! &7(dropplugin.cmd.level)"
       no-alevel-permission: "&4Blad: &cNie masz uprawnien do sprawdzania innych graczy! &7(dropplugin.cmd.alevel)"
@@ -54,7 +54,7 @@ messages:
       player-data-error: "&4Blad: &cNie mozna zaladowac Twoich danych!"
       target-player-data-error: "&4Blad: &cNie mozna zaladowac danych podanego gracza!"
       player-offline: "&4Blad: &cPodany gracz nie jest online!"
-      usage: "&cPoprawne uzycie: &7/level [nick_gracza]"
+      usage: " &8* &7&cPoprawne uzycie: &7/level [nick_gracza]"
       no-data: "&4Blad: &cBrak danych gracza."
       header: "&8&m-----------------&8[ &f&lPOZIOM GRACZA &8]&8&m-----------------"
       nick: " &8* &7Nick: &e{PLAYER}"
@@ -64,15 +64,15 @@ messages:
 settings:
   lvling:
     status: true
-    pointsToLvlup: 100
+    pointsToLvlup: 300
     maxLevel: 100
-    chatLevels: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+    chatLevels: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100]
     chatLevelMessage: "&6Gracz: &e{PLAYER} &6awansowal na &e{LVL} &6poziom gornictwa."
     chatLevelMaxMessage: "&6Gracz: &e{PLAYER} &6osiagnal najwiekszy level gornictwa!"
     chatLevelUpMessage: "&eAWANS! &aOsiagnales {LVL} level, do nastepnego potrzebujesz {POINTS} pkt."
   toinv:
     status: true
-    message-status: false
+    message-status: true
     messageFullInv: "&cPosiadasz pelen ekwipunek! Wylacz drop albo zrob miejsce."
   actionbar:
     status: true
@@ -102,98 +102,98 @@ settings:
       permission: dropplugin.vip
       additionalchance: 0.5
 gui:
-  name: "&2&lDrop ze Stone"
+  name: "&6&lDrop ze Stone"
   size: 36
   filler:
-    name: "&a*"
+    name: "&r "
     status: true
     item: BLACK_STAINED_GLASS_PANE
   status:
     enable: "&aTak"
     disable: "&cNie"
   item:
-    name: "&2&l{NAME}"
+    name: "&e&l{NAME}"
     enchanted: true
     lores:
-      - "&8* &7Szansa: &2{CHANCE}% &7(+{CHANCE-BONUS}%) &e({CHANCE-SUM}%)"
-      - "&8* &7Wypada pomiedzy &2{HEIGHT-MIN} &7a &2{HEIGHT-MAX} &7poziomem."
-      - "&8* &7Wypada w ilosci od &2{AMOUNT-MIN} &7do &2{AMOUNT-MAX}&7."
-      - "&8* &7Wypada w ilosci od &2{POINTS-MIN} &7do &2{POINTS-MAX} &7punktow."
-      - "&8* &7Exp: &2{EXP}"
-      - "&8* &7Szczescie: {FORTUNE}"
-      - "&8* &7Wlaczony: {STATUS}"
+      - " &8* &7Szansa: &6{CHANCE}% &7(+{CHANCE-BONUS}%) &e({CHANCE-SUM}%)"
+      - " &8* &7Wypada pomiedzy &6{HEIGHT-MIN} &7a &6{HEIGHT-MAX} &7poziomem."
+      - " &8* &7Wypada w ilosci od &6{AMOUNT-MIN} &7do &6{AMOUNT-MAX}&7."
+      - " &8* &7Wypada w ilosci od &6{POINTS-MIN} &7do &6{POINTS-MAX} &7punktow."
+      - " &8* &7Exp: &6{EXP}"
+      - " &8* &7Szczescie: {FORTUNE}"
+      - " &8* &7Wlaczony: {STATUS}"
       - ""
-      - "&8* &7Wykopales juz: &2{MINED} &7szt."
+      - "&8* &7Wykopales juz: &6{MINED} &7szt."
   locked:
     # Wyświetlanie zablokowanych dropów (wymagany poziom gracza)
     name: "&c&lZABLOKOWANY DROP"
     item: BARRIER
     lores:
       - "&7Drop: &e{DROP-NAME}"
-      - "&7Wymaga poziomu: &c{NEEDED-LEVEL}"
-      - "&7Twój poziom: &a{PLAYER-LEVEL}"
+      - " &8* &7Wymaga poziomu: &c{NEEDED-LEVEL}"
+      - " &8* &7Twój poziom: &a{PLAYER-LEVEL}"
       - ""
-      - "&cMusisz osiągnąć poziom &e{NEEDED-LEVEL} &caby odblokować!"
+      - " &8* &cMusisz osiągnąć poziom &e{NEEDED-LEVEL} &caby odblokować!"
   cobble:
-    name: "&2&lCobblestone"
+    name: "&6&lCobblestone"
     status: true
-    item: STONE
+    item: COBBLESTONE
     slot: 35
     lores:
-      - "&8* &7Status: {STATUS}"
-      - "&8* &7Kliknij aby zmienic!"
+      - " &8* &7Status: {STATUS}"
+      - " &8* &7Kliknij aby zmienic!"
   messages:
-    name: "&2&lWiadomosci"
+    name: "&6&lWiadomosci"
     status: true
     item: PAPER
     slot: 34
     lores:
-      - "&8* &7Status: {STATUS}"
-      - "&8* &7Kliknij aby zmienic!"
+      - " &8* &7Status: {STATUS}"
+      - " &8* &7Kliknij aby zmienic!"
   turbos:
-    name: "&2&lDostepne eventy"
+    name: "&6&lDostepne eventy"
     status: true
     item: DIAMOND_PICKAXE
     slot: 33
     lores:
       - ""
-      - "&8* &7TurboDrop: {DROP-STATUS}"
-      - "&8* &7Pozostaly czas: &2{DROP-EXPIRE}"
+      - " &8* &7TurboDrop: {DROP-STATUS}"
+      - " &8* &7Pozostaly czas: &6{DROP-EXPIRE}"
       - ""
-      - "&8* &7TurboDrop (Dla mnie): {ME-DROP-STATUS}"
-      - "&8* &7Pozostaly czas: &2{ME-DROP-EXPIRE}"
+      - " &8* &7TurboDrop (Dla mnie): {ME-DROP-STATUS}"
+      - " &8* &7Pozostaly czas: &6{ME-DROP-EXPIRE}"
       - ""
-      - "&8* &7TurboExp: {EXP-STATUS}"
-      - "&8* &7Pozostaly czas: &2{EXP-EXPIRE}"
+      - " &8* &7TurboExp: {EXP-STATUS}"
+      - " &8* &7Pozostaly czas: &6{EXP-EXPIRE}"
       - ""
-      - "&8* &7TurboExp (Dla mnie): {ME-EXP-STATUS}"
-      - "&8* &7Pozostaly czas: &2{ME-EXP-EXPIRE}"
+      - " &8* &7TurboExp (Dla mnie): {ME-EXP-STATUS}"
+      - " &8* &7Pozostaly czas: &6{ME-EXP-EXPIRE}"
   level:
-    name: "&2&lDoswiadczenie"
+    name: "&6&lDoswiadczenie"
     status: true
     item: EXPERIENCE_BOTTLE
     slot: 32
     lore:
       - ""
-      - "&8* &7Aktualny level kopania: &2{LVL}"
-      - "&8* &7Aktualne punkty: &2{PKT}"
-      - "&8* &7Punkty do nastepnego levela: &2{POINTS-TO-LEVEL}"
+      - " &8* &7Aktualny level kopania: &6{LVL}"
+      - " &8* &7Aktualne punkty: &6{PKT}"
+      - " &8* &7Punkty do nastepnego levela: &e{POINTS-TO-LEVEL}"
       - ""
-      - "&8* &7Awans levala jest co &2500 &7pkt razy aktualny level"
+      - " &8* &7Awans levala jest co &6500 &7pkt razy aktualny level"
   enable-all:
-    name: "&aWlacz wszystkie dropy!"
+    name: " &aWlacz wszystkie dropy!"
     status: true
     item: LIME_TERRACOTTA
     slot: 27
     lores:
-      - "&8* &7Kliknij aby zmienic!"
+      - " &8* &7Kliknij aby zmienic!"
   disable-all:
-    name: "&cWylacz wszystkie dropy!"
+    name: " &cWylacz wszystkie dropy!"
     status: true
     item: RED_TERRACOTTA
     slot: 28
     lores:
-      - "&8* &7Kliknij aby zmienic!"
+      - " &8* &7Kliknij aby zmienic!"
 turbos:
   drop: 0
   exp: 0

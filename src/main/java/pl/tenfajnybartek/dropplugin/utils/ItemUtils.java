@@ -45,28 +45,23 @@ public final class ItemUtils {
         int maxDurability = item.getType().getMaxDurability();
         if (maxDurability <= 0) return;
 
-        // Unbreaking ma szansę na uniknięcie uszkodzenia według mechaniki Minecrafta
         int enchantLevel = item.getEnchantmentLevel(Enchantment.UNBREAKING);
         boolean shouldDamage = true;
         
         if (enchantLevel > 0) {
-            // W Minecraft: szansa na otrzymanie uszkodzenia = 100/(level+1) %
-            // Więc szansa na UNIKNIĘCIE uszkodzenia = 1 - 100/(level+1) %
             int damageChance = 100 / (enchantLevel + 1);
             int roll = RandomUtils.getRandInt(0, 100);
             if (roll >= damageChance) {
-                shouldDamage = false; // Uniknięto uszkodzenia
+                shouldDamage = false;
             }
         }
         
         if (!shouldDamage) {
-            return; // Unbreaking uratował narzędzie
+            return;
         }
 
-        // Zwiększ uszkodzenie
         int newDamage = currentDamage + 1;
-        
-        // Sprawdź czy narzędzie się zepsuło
+
         if (newDamage >= maxDurability) {
             player.getInventory().clear(player.getInventory().getHeldItemSlot());
             if (player.getLocation() != null) {

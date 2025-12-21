@@ -38,10 +38,6 @@ public class UserManager {
         }
     }
 
-    /**
-     * Zwraca User tylko jeżeli jest już załadowany w pamięci (cache).
-     * BEZPIECZNE do wywołania z wątków asynchronicznych.
-     */
     public User getUserIfLoaded(UUID uuid) {
         if (uuid == null) return null;
         return this.userMap.get(uuid);
@@ -58,17 +54,10 @@ public class UserManager {
         return null;
     }
 
-    /**
-     * Zapisuje użytkownika domyślnie asynchronicznie (tak jak było).
-     */
     public void save(UUID uuid) {
         save(uuid, false); // domyślnie async
     }
 
-    /**
-     * Zapisuje użytkownika synchronicznie lub asynchronicznie, w zależności od parametru sync.
-     * Używaj sync = true podczas wyłączania pluginu!
-     */
     public void save(UUID uuid, boolean sync) {
         if (uuid == null) return;
         User user = this.userMap.get(uuid);
@@ -82,7 +71,7 @@ public class UserManager {
 
         try {
             Database db = Database.getInstance();
-            if (db != null) db.saveUser(user, sync); // przekazujemy tryb dalej
+            if (db != null) db.saveUser(user, sync);
         } catch (Exception e) {
             Bukkit.getLogger().warning("Błąd podczas zapisu użytkownika " + uuid + ": " + e.getMessage());
             e.printStackTrace();
@@ -94,28 +83,14 @@ public class UserManager {
         this.userMap.remove(uuid);
     }
 
-    /**
-     * Ładuje użytkownika do cache.
-     * Używane przy wczytywaniu danych z bazy danych.
-     * 
-     * @param user Użytkownik do załadowania
-     * @return true jeśli użytkownik został załadowany, false jeśli już istniał
-     */
     public boolean loadUser(User user) {
         if (user == null || user.getIdentifier() == null) {
             return false;
         }
         User existing = this.userMap.putIfAbsent(user.getIdentifier(), user);
-        return existing == null; // true jeśli był nowy, false jeśli już istniał
+        return existing == null;
     }
 
-    /**
-     * Zwraca mapę użytkowników.
-     * UWAGA: Używaj tej metody tylko do odczytu (np. liczenia użytkowników).
-     * Do modyfikacji używaj dedykowanych metod jak loadUser().
-     * 
-     * @return Niemodyfikowalna mapa użytkowników
-     */
     public Map<UUID, User> getUserMap() {
         return this.userMap;
     }

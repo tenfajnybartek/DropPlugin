@@ -12,7 +12,7 @@ import pl.tenfajnybartek.dropplugin.utils.ChatUtils;
 import pl.tenfajnybartek.dropplugin.utils.DataUtils;
 
 public class ADropCommand implements CommandExecutor {
-    // Limity dla komendy /adrop level
+
     private static final int MIN_LEVEL = 1;
     private static final int MAX_LEVEL = 1000;
     private static final int MIN_POINTS = 0;

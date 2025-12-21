@@ -4,10 +4,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
-/**
- * Reprezentuje pojedynczy drop, który może wypaść ze stone.
- * Zawiera informacje o itemie, szansie, wysokości, ilości punktów i doświadczenia.
- */
 public final class Drop {
     private final ItemStack itemStack;
     private final boolean fortune;
@@ -53,8 +49,7 @@ public final class Drop {
         this.amount = amount;
         this.neededLevel = Math.max(0, neededLevel);
         this.points = points;
-        
-        // Ostrzeżenie gdy exp jest ujemne
+
         if (exp < 0) {
             java.util.logging.Logger.getLogger("DropPlugin").warning("Drop '" + name + "' ma ujemne exp (" + exp + "), ustawiono na 0");
             this.exp = 0;
@@ -63,17 +58,6 @@ public final class Drop {
         }
     }
 
-    /**
-     * Normalizuje wartość szansy do zakresu 0.0-1.0.
-     * Wszystkie wartości są traktowane jako procenty i dzielone przez 100.
-     * Przykłady:
-     * - 1.2 → 0.012 (1.2% szansy)
-     * - 50.0 → 0.50 (50% szansy)
-     * - 0.5 → 0.005 (0.5% szansy)
-     * 
-     * @param c Wartość szansy w procentach (0.0-100.0)
-     * @return Znormalizowana wartość szansy jako prawdopodobieństwo (0.0-1.0)
-     */
     private static double normalizeChance(double c) {
         if (c < 0.0) {
             throw new IllegalArgumentException("chance must be >= 0.0 (percentage value, e.g., 1.2 for 1.2%)");
@@ -81,7 +65,6 @@ public final class Drop {
         if (c > 100.0) {
             throw new IllegalArgumentException("chance must be <= 100.0 (percentage value, max 100%)");
         }
-        // Wszystkie wartości są traktowane jako procenty i dzielone przez 100
         return c / 100.0;
     }
 
@@ -117,19 +100,10 @@ public final class Drop {
         return this.exp;
     }
 
-    /**
-     * @return Minimalny poziom wymagany do odblokowania dropu (0 = brak wymagania)
-     */
     public int getNeededLevel() {
         return this.neededLevel;
     }
 
-    /**
-     * Sprawdza czy gracz ma wystarczający poziom aby odblokować ten drop.
-     * 
-     * @param playerLevel Aktualny poziom gracza
-     * @return true jeśli drop jest odblokowany dla tego poziomu
-     */
     public boolean isUnlocked(int playerLevel) {
         return playerLevel >= this.neededLevel;
     }
