@@ -11,7 +11,12 @@ import java.util.stream.Collectors;
 public final class ChatUtils {
     private ChatUtils() {}
 
-    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
+    // Supports both legacy color codes (&c, &a, etc.) and hex colors (&#RRGGBB)
+    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder()
+            .character('&')
+            .hexCharacter('#')
+            .hexColors()
+            .build();
 
     public static String colour(String contentMessage) {
         if (contentMessage == null) return "";
