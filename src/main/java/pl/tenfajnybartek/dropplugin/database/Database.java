@@ -227,11 +227,11 @@ public class Database {
     }
 
     /**
-     * Gets the player name at the specified rank position based on level.
+     * Gets the player name and level at the specified rank position based on level.
      * Rank 1 is the player with the highest level.
      * 
      * @param rank The rank position (1-based)
-     * @return The player name at that rank, or null if no player exists at that rank
+     * @return The player name with level (e.g., "tenfajnybartek [30]") at that rank, or null if no player exists at that rank
      */
     public String getTopLevelPlayer(int rank) {
         if (rank < 1) {
@@ -244,7 +244,7 @@ public class Database {
         }
         
         // SQL query is the same for both SQLite and MySQL
-        String sql = "SELECT identifier FROM drop_users ORDER BY lvl DESC, points DESC LIMIT 1 OFFSET ?";
+        String sql = "SELECT identifier, lvl FROM drop_users ORDER BY lvl DESC, points DESC LIMIT 1 OFFSET ?";
         
         try (Connection conn = ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -252,14 +252,16 @@ public class Database {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     String uuidStr = rs.getString("identifier");
+                    int level = rs.getInt("lvl");
                     try {
                         java.util.UUID uuid = java.util.UUID.fromString(uuidStr);
                         // Try to get the name from Bukkit (works for online/offline players)
                         org.bukkit.OfflinePlayer offlinePlayer = org.bukkit.Bukkit.getOfflinePlayer(uuid);
                         String name = offlinePlayer.getName();
-                        return name != null ? name : uuidStr;
+                        String playerName = name != null ? name : uuidStr;
+                        return playerName + " [" + level + "]";
                     } catch (IllegalArgumentException e) {
-                        return uuidStr;
+                        return uuidStr + " [" + level + "]";
                     }
                 }
             }
