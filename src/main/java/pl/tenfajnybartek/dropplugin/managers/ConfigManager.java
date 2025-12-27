@@ -108,6 +108,7 @@ public class ConfigManager {
     private final boolean fillerStatus;
     private final boolean lvlStatus;
     private final boolean actionbarStatus;
+    private final String toplevelNoPlayer;
     private long turboDrop;
     private long turboExp;
     private static ConfigManager configManager;
@@ -129,6 +130,8 @@ public class ConfigManager {
         this.dbConnectionTimeoutMs = getLongSafe(fc, "database.connectionTimeoutMs", 30000L);
         this.dbIdleTimeoutMs = getLongSafe(fc, "database.idleTimeoutMs", 600000L);
         this.dbLeakDetectionThresholdMs = getLongSafe(fc, "database.leakDetectionThresholdMs", 0L);
+
+        this.toplevelNoPlayer = getStringSafe(fc, "placeholders.toplevel-no-player", "-");
 
         this.dropMessage = getStringSafe(fc, "messages.drop", "");
         this.turboMessage = getStringSafe(fc, "messages.turbo.message", "");
@@ -411,4 +414,5 @@ public class ConfigManager {
     public String getCmdLevelLevelPoints() { return this.cmdLevelLevelPoints; }
     public String getCmdLevelPointsToNext() { return this.cmdLevelPointsToNext; }
     public String getCmdLevelFooter() { return this.cmdLevelFooter; }
+    public String getToplevelNoPlayer() { return this.toplevelNoPlayer; }
 }

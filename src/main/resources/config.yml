@@ -16,6 +16,10 @@ database:
   connectionTimeoutMs: 30000       # Timeout połączenia w ms (30 sekund)
   idleTimeoutMs: 600000            # Timeout bezczynności w ms (10 minut)
   leakDetectionThresholdMs: 0      # Wykrywanie wycieków połączeń (0 = wyłączone)
+placeholders:
+  # Wiadomość wyświetlana gdy gracz na danej pozycji w rankingu nie istnieje
+  # Używane dla placeholdera %dropplugin_toplevel-x%
+  toplevel-no-player: "-"
 messages:
   turbo:
     message: "&eAdministrator: &6{ADMIN} &6wlaczyl {TYPE} &6na &e{TIME}"

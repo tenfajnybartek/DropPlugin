@@ -226,6 +226,50 @@ public class Database {
         });
     }
 
+    /**
+     * Gets the player name at the specified rank position based on level.
+     * Rank 1 is the player with the highest level.
+     * 
+     * @param rank The rank position (1-based)
+     * @return The player name at that rank, or null if no player exists at that rank
+     */
+    public String getTopLevelPlayer(int rank) {
+        if (rank < 1) {
+            return null;
+        }
+        
+        if (ds == null) {
+            logger.fine("DataSource nie zainicjalizowany - pomijam getTopLevelPlayer");
+            return null;
+        }
+        
+        // SQL query is the same for both SQLite and MySQL
+        String sql = "SELECT identifier FROM drop_users ORDER BY lvl DESC, points DESC LIMIT 1 OFFSET ?";
+        
+        try (Connection conn = ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, rank - 1); // OFFSET is 0-based
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String uuidStr = rs.getString("identifier");
+                    try {
+                        java.util.UUID uuid = java.util.UUID.fromString(uuidStr);
+                        // Try to get the name from Bukkit (works for online/offline players)
+                        org.bukkit.OfflinePlayer offlinePlayer = org.bukkit.Bukkit.getOfflinePlayer(uuid);
+                        String name = offlinePlayer.getName();
+                        return name != null ? name : uuidStr;
+                    } catch (IllegalArgumentException e) {
+                        return uuidStr;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            logger.warning("Nie można pobrać top gracza na pozycji " + rank + ": " + e.getMessage());
+        }
+        
+        return null;
+    }
+
     public void disconnect() {
         disconnect(false);
     }

@@ -122,7 +122,7 @@ public class DropPlugin extends JavaPlugin {
             try {
                 new pl.tenfajnybartek.dropplugin.integrations.DropPluginExpansion(this).register();
                 this.logger.info("Zarejestrowano PlaceholderAPI expansion!");
-                this.logger.info("Dostępne placeholdery: %dropplugin_level%, %dropplugin_points%, %dropplugin_points_required%, %dropplugin_points_to_next%");
+                this.logger.info("Dostępne placeholdery: %dropplugin_level%, %dropplugin_points%, %dropplugin_points_required%, %dropplugin_points_to_next%, %dropplugin_toplevel-x%");
             } catch (Exception e) {
                 this.logger.warning("Nie udało się zarejestrować PlaceholderAPI expansion: " + e.getMessage());
             }
