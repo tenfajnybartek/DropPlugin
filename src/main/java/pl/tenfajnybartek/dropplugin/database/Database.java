@@ -231,15 +231,15 @@ public class Database {
      * Rank 1 is the player with the highest level.
      * 
      * @param rank The rank position (1-based)
-     * @return The player name with level (e.g., "tenfajnybartek [30]") at that rank, or null if no player exists at that rank
+     * @return A String array with [playerName, level] at that rank, or null if no player exists at that rank
      */
-    public String getTopLevelPlayer(int rank) {
+    public String[] getTopLevelPlayerData(int rank) {
         if (rank < 1) {
             return null;
         }
         
         if (ds == null) {
-            logger.fine("DataSource nie zainicjalizowany - pomijam getTopLevelPlayer");
+            logger.fine("DataSource nie zainicjalizowany - pomijam getTopLevelPlayerData");
             return null;
         }
         
@@ -259,9 +259,9 @@ public class Database {
                         org.bukkit.OfflinePlayer offlinePlayer = org.bukkit.Bukkit.getOfflinePlayer(uuid);
                         String name = offlinePlayer.getName();
                         String playerName = name != null ? name : uuidStr;
-                        return playerName + " [" + level + "]";
+                        return new String[]{playerName, String.valueOf(level)};
                     } catch (IllegalArgumentException e) {
-                        return uuidStr + " [" + level + "]";
+                        return new String[]{uuidStr, String.valueOf(level)};
                     }
                 }
             }

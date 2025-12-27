@@ -18,16 +18,16 @@ public class DropPluginExpansion extends PlaceholderExpansion {
     private final DropPlugin plugin;
     
     // Cache for top level players to avoid frequent database queries
-    // Key: rank position, Value: CacheEntry with player name and timestamp
+    // Key: rank position, Value: CacheEntry with player data and timestamp
     private final Map<Integer, CacheEntry> topLevelCache = new ConcurrentHashMap<>();
     private static final long CACHE_DURATION_MS = 30000; // 30 seconds cache
     
     private static class CacheEntry {
-        final String playerName;
+        final String[] playerData; // [0] = name, [1] = level
         final long timestamp;
         
-        CacheEntry(String playerName) {
-            this.playerName = playerName;
+        CacheEntry(String[] playerData) {
+            this.playerData = playerData;
             this.timestamp = System.currentTimeMillis();
         }
         
@@ -63,6 +63,18 @@ public class DropPluginExpansion extends PlaceholderExpansion {
         return true;
     }
     
+    /**
+     * Formats player data using the configured format from config.yml
+     * Replaces {NAME} with player name and {LEVEL} with player level
+     */
+    private String formatTopLevelPlayer(String[] playerData) {
+        if (playerData == null || playerData.length < 2) {
+            return ConfigManager.getConfigManager().getToplevelNoPlayer();
+        }
+        String format = ConfigManager.getConfigManager().getToplevelFormat();
+        return format.replace("{NAME}", playerData[0]).replace("{LEVEL}", playerData[1]);
+    }
+    
     @Override
     @Nullable
     public String onRequest(OfflinePlayer player, @NotNull String params) {
@@ -78,22 +90,19 @@ public class DropPluginExpansion extends PlaceholderExpansion {
                 // Check cache first
                 CacheEntry cached = topLevelCache.get(rank);
                 if (cached != null && !cached.isExpired()) {
-                    return cached.playerName != null ? cached.playerName : ConfigManager.getConfigManager().getToplevelNoPlayer();
+                    return formatTopLevelPlayer(cached.playerData);
                 }
                 
                 Database db = Database.getInstance();
                 if (db == null) {
                     return ConfigManager.getConfigManager().getToplevelNoPlayer();
                 }
-                String playerName = db.getTopLevelPlayer(rank);
+                String[] playerData = db.getTopLevelPlayerData(rank);
                 
                 // Update cache
-                topLevelCache.put(rank, new CacheEntry(playerName));
+                topLevelCache.put(rank, new CacheEntry(playerData));
                 
-                if (playerName == null) {
-                    return ConfigManager.getConfigManager().getToplevelNoPlayer();
-                }
-                return playerName;
+                return formatTopLevelPlayer(playerData);
             } catch (NumberFormatException e) {
                 return ConfigManager.getConfigManager().getToplevelNoPlayer();
             }
