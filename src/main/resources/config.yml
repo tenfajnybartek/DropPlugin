@@ -22,7 +22,9 @@ placeholders:
   toplevel-no-player: "-"
   # Format wyświetlania gracza w rankingu toplevel
   # Dostępne placeholdery: {NAME} - nazwa gracza, {LEVEL} - poziom gracza
-  # Przykład: "&c{NAME} &8[&c{LEVEL}&8]" wyświetli: tenfajnybartek [30] z kolorami
+  # Obsługuje kolory legacy (&c, &a, itd.) oraz hex (&#RRGGBB)
+  # Przykład legacy: "&c{NAME} &8[&c{LEVEL}&8]"
+  # Przykład hex: "&#FCD05C{NAME} &8[&#FCD05C{LEVEL}&8]"
   toplevel-format: "&f{NAME} &7[&e{LEVEL}&7]"
 messages:
   turbo:
