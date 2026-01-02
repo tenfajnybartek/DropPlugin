@@ -96,7 +96,6 @@ public class DropPlugin extends JavaPlugin {
 
     private void registerListeners() {
         Object[] listeners = new Object[] {
-                new AsyncPlayerChatListener(this),
                 new BlockBreakListener(this),
                 new InventoryClickListener(this),
                 new PlayerJoinLeaveListener(this),
